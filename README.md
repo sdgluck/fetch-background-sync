@@ -114,12 +114,11 @@ Examples:
 
 - named GET
 
-        // Equivalent to `fetchSync.sync()`
         fetchSync('GetMessages', '/messages')
 
 - unnamed POST
 
-        fetchSync.sync('/update-profile', {
+        fetchSync('/update-profile', {
           method: 'POST',
           body: { name: '' }
         })
@@ -132,7 +131,7 @@ Examples:
 
 - unnamed with Request
 
-        fetchSync.sync(
+        fetchSync(
           new Request('/messages')
         )
 
