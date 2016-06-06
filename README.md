@@ -170,7 +170,7 @@ Cancel all syncs, named and unnamed.
 
     import fetchSync from 'fetch-sync'
 
-    // Initialise the library...
+    // Initialise...
 
     fetchSync.init({
       workerUrl: 'fetch-sync.sw.js',
@@ -179,9 +179,11 @@ Cancel all syncs, named and unnamed.
       }
     })
 
+    // Make a request...
+
     /**
      * Save important work using a `sync` operation
-     * to ensure request gets made now or later if
+     * to ensure request gets made later if
      * UA has lost connectivity.
      */
     function saveImportantWork () {
@@ -189,7 +191,7 @@ Cancel all syncs, named and unnamed.
         body: 'so important',
         method: 'POST'
       }).then((response) => {
-        console.log('Status ' + response.statusText)
+        console.log('Response ' + response.statusText)
       })
     }
 
@@ -202,8 +204,7 @@ Then, [sometime later :alarm_clock:](https://www.youtube.com/watch?v=K9yuDdCyQhs
     // UA regains connectivity
 
     // Console
-    // > OK
-    // > Their work was saved!
+    // > Response OK
 
 ## Todo
 
