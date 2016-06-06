@@ -183,9 +183,11 @@ Then, [sometime later :alarm_clock:](https://www.youtube.com/watch?v=K9yuDdCyQhs
 
 ## Todo
 
-- WIP: add support for periodicSync operations.
+- [WIP] Add support for periodicSync operations.
 (See the [`periodic-sync-support`](https://github.com/sdgluck/fetch-sync/tree/periodic-sync-support) branch.)
-- Reduce size of library by dropping some dependencies, e.g. using Redux is a bit overkill.
+- Reduce size of library by dropping some dependencies, e.g. is using Redux overkill?
+- Implement some way of integrating into existing service worker infrastructures.
+Maybe using [service-worker-ware](https://github.com/fxos-components/serviceworkerware)?
 
 ## Test
 
