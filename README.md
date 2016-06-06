@@ -87,7 +87,7 @@ Example:
         // Script
         <script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
 
-        // Initialise, passing in worker lib...
+        // Initialise, passing in worker lib location...
 
         fetchSync.init({
           workerUrl: '/node_modules/fetch-sync/dist/fetch-sync.sw.js',
