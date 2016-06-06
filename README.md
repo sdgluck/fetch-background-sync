@@ -98,7 +98,7 @@ Example:
 
 <p>______</p>
 
-### `fetchSync.sync([name, ]request[, options]) : Promise<Response>`
+### `fetchSync([name, ]request[, options]) : Promise<Response>`
 
 Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.md#one-off-synchronization) Background Sync operation.
 
