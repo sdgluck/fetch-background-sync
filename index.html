@@ -38,12 +38,15 @@
 
     var request = false
 
-    fetchSync.init({
-        workerUrl: 'fetch-sync.min.js'
-    }).catch(function () {
-        main.style.display = 'none'
-        document.querySelector('#error').style.display = 'block'
-    })
+    fetchSync
+        .init({
+            workerUrl: 'fetch-sync.min.js'
+        })
+        .catch(function (err) {
+            main.style.display = 'none'
+            error.style.display = 'block'
+            error.innerText = err.message
+        })
 
     function makeRequest () {
         if (request) {
@@ -61,6 +64,9 @@
                 result.src = URL.createObjectURL(blob)
                 request = false
                 waiting.style.display = 'none'
+            })
+            .catch(function (err) {
+                error.innerText = err.message
             })
     }
 </script>
