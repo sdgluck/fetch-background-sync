@@ -7,6 +7,9 @@ Made with ❤ at [@outlandish](http://www.twitter.com/outlandish)
 <a href="http://badge.fury.io/js/fetch-sync"><img alt="npm version" src="https://badge.fury.io/js/fetch-sync.svg"></a>
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
+Fetch Sync allows you to proxy fetch requests through the
+[Background Sync API](https://github.com/WICG/BackgroundSync/blob/master/explainer.md).
+
 ## Install
 
     npm install fetch-sync --save
@@ -71,6 +74,28 @@ Initialise fetchSync.
           // Force the worker registration to update the worker script.
           forceUpdate {Boolean} (optional, default: false)
         }
+
+Example:
+
+        // Import client lib...
+
+        // ES6
+        import fetchSync from 'fetch-sync'
+
+        // ES5
+        var fetchSync = require('fetch-sync')
+
+        // Script
+        <script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
+
+        // Initialise, passing in worker lib...
+
+        fetchSync.init({
+          workerUrl: '/node_modules/fetch-sync/dist/fetch-sync.sw.js',
+          workerOptions: {
+            scope: '<website address>' // e.g. 'http://localhost:8000'
+          }
+        })
 
 <p>______</p>
 
