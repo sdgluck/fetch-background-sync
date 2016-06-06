@@ -9,6 +9,8 @@ Made with ❤ at [@outlandish](http://www.twitter.com/outlandish)
 
 Fetch Sync allows you to proxy fetch requests through the Background Sync API using a simple fetch-like API.
 
+Check out a [live demo here](https://sdgluck.github.io/fetch-sync/).
+
 ## Install
 
     npm install fetch-sync --save
