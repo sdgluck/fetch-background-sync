@@ -3,27 +3,20 @@
 <head>
     <script src="fetch-sync.min.js"></script>
     <style>
-        #error {
-            display: none;
-            color: red;
-        }
-        #main {
-            display: block;
-        }
-        #waiting {
-            display: none;
-        }
+        #error { display: none; color: red; }
+        #main { display: block; }
+        #waiting { display: none; }
     </style>
 </head>
 <body>
 <div id="error"></div>
 <div id="main">
-    <ul>
+    <ol>
         <li>Go offline
         <li>Click the button below
         <li>Go online
         <li>Tada!
-    </ul>
+    </ol>
     <button onclick="makeRequest()">Make request</button>
     <p id="waiting">Waiting for connectivity...</p>
     <img id="result" />
