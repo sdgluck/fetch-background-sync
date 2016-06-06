@@ -1,4 +1,5 @@
 .DS_Store
+/.dist
 /.idea
 /node_modules
 /dist/*.map
