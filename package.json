@@ -1,6 +1,6 @@
 {
   "name": "fetch-sync",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A handy wrapper for the Background Sync API",
   "author": "Sam Gluck <sdgluck@gmail.com>",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "watch": "webpack --progress --colors --watch --config webpack.development.config.js",
     "clean": "rm -rf dist",
     "test": "node test/server.js",
-    "prepublish": "npm run lint && npm run clean && npm run build:prod"
+    "prepublish": "npm run lint && npm run clean && npm run build"
   },
   "bugs": {
     "url": "https://github.com/sdgluck/fetch-sync/issues"
