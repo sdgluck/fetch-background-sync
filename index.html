@@ -40,7 +40,9 @@
 
     fetchSync.init({
         workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.min.js',
-        workerScope: '/'
+        workerOptions: {
+            scope: '/'
+        }
     }).catch(function () {
         main.style.display = 'none'
         document.querySelector('#error').style.display = 'block'
