@@ -15,7 +15,7 @@
     "watch": "webpack --progress --colors --watch --config webpack.development.config.js",
     "clean": "rm -rf dist",
     "test": "node test/server.js",
-    "prepublish": "npm run lint && npm run clean && npm run build"
+    "prepublish": "npm run lint && npm run clean && npm run build && npm run build:dev"
   },
   "bugs": {
     "url": "https://github.com/sdgluck/fetch-sync/issues"
