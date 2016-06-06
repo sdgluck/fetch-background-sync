@@ -1,0 +1,6 @@
+{
+    "title": "fetch-sync-example",
+    "dependencies": {
+        "fetch-sync": "^0.1.0"
+    }
+}

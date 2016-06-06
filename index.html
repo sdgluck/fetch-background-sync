@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <script src="dist/fetch-sync.min.js"></script>
+    <script src="node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
     <style>
         #error {
             display: none;
@@ -9,6 +9,9 @@
         }
         #main {
             display: block;
+        }
+        #waiting {
+            display: none;
         }
     </style>
 </head>
@@ -22,6 +25,7 @@
         <li>Tada!
     </ul>
     <button onclick="makeRequest()">Make request</button>
+    <p id="waiting">Waiting for connectivity...</p>
     <img id="result" />
 </div>
 <script>
@@ -29,23 +33,35 @@
 
     var main = document.querySelector('#main')
     var error = document.querySelector('#error')
+    var waiting = document.querySelector('#waiting')
     var result = document.querySelector('#result')
 
+    var request = false
+
     fetchSync.init({
-        workerUrl: ''
+        workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.min.js',
+        workerScope: '/'
     }).catch(function () {
         main.style.display = 'none'
         document.querySelector('#error').style.display = 'block'
     })
 
     function makeRequest () {
-        fetchSync('http://')
+        if (request) {
+            return
+        }
+
+        request = true
+        waiting.style.display = 'block'
+
+        fetchSync('http://thecatapi.com/api/images/get?format=src&type=gif')
             .then(function (response) {
-            return response.blob()
+                return response.blob()
             })
             .then(function (blob) {
-                var objectUrl = URL.createObjectURL(blob)
-                result.src = objectUrl
+                result.src = URL.createObjectURL(blob)
+                request = false
+                waiting.style.display = 'none'
             })
     }
 </script>
