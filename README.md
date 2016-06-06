@@ -183,8 +183,9 @@ Then, [sometime later :alarm_clock:](https://www.youtube.com/watch?v=K9yuDdCyQhs
 
 ## Todo
 
-- WIP: add support for periodicSync operations. (See the [`periodic-sync-support`]() branch.)
-- Reduce size of library (get rid of some dependencies, e.g. using Redux is a bit overkill).
+- WIP: add support for periodicSync operations.
+(See the [`periodic-sync-support`](https://github.com/sdgluck/fetch-sync/tree/periodic-sync-support) branch.)
+- Reduce size of library by dropping some dependencies, e.g. using Redux is a bit overkill.
 
 ## Test
 
