@@ -1199,8 +1199,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options.forceUpdate) {
 	      registration.update();
 	    }
-	    _store2.default.dispatch((0, _creators.setServiceWorker)(navigator.serviceWorker.controller));
-	    _store2.default.dispatch((0, _requests.openCommsChannel)());
+	  }).then(function () {
+	    return _store2.default.dispatch((0, _creators.setServiceWorker)(navigator.serviceWorker.controller));
+	  }).then(function () {
+	    return _store2.default.dispatch((0, _requests.openCommsChannel)());
 	  }).catch(function (err) {
 	    console.warn('fetchSync: failed to register the Service Worker');
 	    throw err;
