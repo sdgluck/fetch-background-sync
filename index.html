@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <script src="node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
+    <script src="fetch-sync.min.js"></script>
     <style>
         #error {
             display: none;
@@ -39,7 +39,7 @@
     var request = false
 
     fetchSync.init({
-        workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.min.js',
+        workerUrl: 'fetch-sync.min.js',
         workerOptions: {
             scope: '/'
         }
