@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <script src="dist/fetch-sync.min.js"></script>
+    <style>
+        #error {
+            display: none;
+            color: red;
+        }
+        #main {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="error"></div>
+<div id="main">
+    <ul>
+        <li>Go offline
+        <li>Click the button below
+        <li>Go online
+        <li>Tada!
+    </ul>
+    <button onclick="makeRequest()">Make request</button>
+    <img id="result" />
+</div>
+<script>
+    /* global fetchSync:false */
+
+    var main = document.querySelector('#main')
+    var error = document.querySelector('#error')
+    var result = document.querySelector('#result')
+
+    fetchSync.init({
+        workerUrl: ''
+    }).catch(function () {
+        main.style.display = 'none'
+        document.querySelector('#error').style.display = 'block'
+    })
+
+    function makeRequest () {
+        fetchSync('http://')
+            .then(function (response) {
+            return response.blob()
+            })
+            .then(function (blob) {
+                var objectUrl = URL.createObjectURL(blob)
+                result.src = objectUrl
+            })
+    }
+</script>
+</body>
+</html>
