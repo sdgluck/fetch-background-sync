@@ -1,0 +1,62 @@
+{
+  "name": "fetch-sync",
+  "version": "0.0.1",
+  "description": "A handy wrapper for the Background Sync API",
+  "author": "Sam Gluck <sdgluck@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sdgluck/fetch-sync.git"
+  },
+  "scripts": {
+    "lint": "standard fetchSync/**/*.js",
+    "build": "webpack --config webpack.production.config.js",
+    "build:dev": "webpack --config webpack.development.config.js",
+    "watch": "webpack --progress --colors --watch --config webpack.development.config.js",
+    "clean": "rm -rf dist",
+    "test": "node test/server.js",
+    "prepublish": "npm run lint && npm run clean && npm run build:prod"
+  },
+  "bugs": {
+    "url": "https://github.com/sdgluck/fetch-sync/issues"
+  },
+  "keywords": [
+    "background",
+    "sync",
+    "service",
+    "worker",
+    "http",
+    "network",
+    "fetch",
+    "request",
+    "requests",
+    "proxy",
+    "proxies"
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.2.0",
+    "babel-core": "^6.5.2",
+    "babel-eslint": "^5.0.0",
+    "babel-loader": "^6.2.3",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-stage-0": "^6.3.13",
+    "catch-and-match": "^0.2.13",
+    "chai": "^3.4.1",
+    "express": "^4.13.4",
+    "idb-wrapper": "^1.6.2",
+    "mini-defer": "0.0.2",
+    "mocha": "^2.3.4",
+    "moment": "^2.12.0",
+    "redux": "^3.3.1",
+    "redux-logger": "^2.6.0",
+    "redux-thunk": "^1.0.3",
+    "serialise-request": "0.0.7",
+    "serialise-response": "0.0.4",
+    "standard": "^6.0.5",
+    "webpack": "^2.0.1-beta"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}
