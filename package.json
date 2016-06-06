@@ -1,6 +1,6 @@
 {
   "name": "fetch-sync",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A handy wrapper for the Background Sync API",
   "author": "Sam Gluck <sdgluck@gmail.com>",
   "license": "MIT",
