@@ -7,9 +7,11 @@ Made with ❤ at [@outlandish](http://www.twitter.com/outlandish)
 <a href="http://badge.fury.io/js/fetch-sync"><img alt="npm version" src="https://badge.fury.io/js/fetch-sync.svg"></a>
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
-Fetch Sync allows you to proxy fetch requests through the Background Sync API using a simple fetch-like API.
+Fetch Sync allows you to proxy fetch requests through the Background Sync API so that they are honoured if made when the UA is offline! Hooray!
 
 Check out a [live demo here](https://sdgluck.github.io/fetch-sync/).
+
+_If the browser does not support Background Sync, the library will fall back on normal `fetch` requests._
 
 ## Install
 
@@ -47,17 +49,19 @@ The browser must support:
 
 Chrome Canary | Chrome | Firefox | IE | Opera | Safari
 :------------:|:------:|:-------:|:--:|:-----:|:-----:
-✔            |✘       |✘       |✘   |✘     |✘
+✔             |✔      |✘       |✘   |✘     |✘
 
 ## Features
 
 - Register a Background Sync operation with one call to `fetchSync()`.
 
-- Shares exactly the same API as `fetch`. Accepts a Request or String, and returns the Promise of a Response.
+- Uses a `fetch`-like API. Accepts a Request or String URL, and returns the Promise of a Response.
 
 - Manage sync operations with `fetchSync.{get,getAll,cancel,cancelAll}()`.
 
-- Named sync operations have their response stored within an IndexedDB store.
+- Named sync operations and have their response stored within an IndexedDB store and are synced between client and worker.
+
+- Can be used with existing Service Worker infrastructures with `importScripts`, or can handle SW registration for you.
 
 ## Initialise
 
@@ -99,25 +103,25 @@ Initialise fetchSync.
 
 Example:
 
-        // Import client lib...
-
-        // ES6
-        import fetchSync from 'fetch-sync'
-
-        // ES5
-        var fetchSync = require('fetch-sync')
-
-        // Script, using bundled dist
-        <script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
-
-        // Initialise, passing in worker lib location...
-
-        fetchSync.init({
-          workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
-          workerOptions: {
-            scope: '<website address>' // e.g. 'http://localhost:8000'
-          }
-        })
+    // Import client lib...
+  
+    // ES6
+    import fetchSync from 'fetch-sync'
+  
+    // ES5
+    var fetchSync = require('fetch-sync')
+  
+    // Script, using bundled dist
+    <script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
+  
+    // Initialise, passing in worker lib location...
+  
+    fetchSync.init({
+      workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
+      workerOptions: {
+        scope: '<website address>' // e.g. 'http://localhost:8000'
+      }
+    })
 
 ### `fetchSync([name, ]request[, options]) : Promise<Response>`
 
@@ -129,27 +133,43 @@ Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.
 
 Returns a Promise that resolves on success of the fetch request.
 
-If called with a `name` the response will be stored and can be retrieved later using `fetchSync.get(<name>)` and then
-`sync.getResponse()`. See the [Sync API](#sync-api) for more details.
+If called with a `name`:
+
+- the response will be stored and can be retrieved later using `fetchSync.get(<name>)` and then
+`sync.getResponse()`.
+- the response will not automatically be removed from the IDBStore in the worker. You should request that a named sync be removed manually by using `sync.remove()`.
+- see the [Sync API](#sync-api) for more details.
 
 Examples:
 
 - named GET
 
         fetchSync('GetMessages', '/messages')
+          .then((response) => response.json())
+          .then((json) => console.log(json.foo))
 
 - unnamed POST
 
-        fetchSync('/update-profile', {
+        const post = fetchSync('/update-profile', {
           method: 'POST',
           body: { name: '' }
         })
+        
+        // cancel the sync...
+        post.cancel()
 
+- unnamed with options
+
+        const headers = new Headers();
+        
+        headers.append('Authorization', 'Basic abcdefghijklmnopqrstuvwxyz');
+        
+        // `fetchSync` accepts the same args as `fetch`...
+        fetchSync('/send-message', { headers })
+        
 - named with options
 
-        fetchSync('/send-message', {
-          body: 'Hello!'
-        })
+        fetchSync('/get-messages', { headers })
 
 - unnamed with Request
 
@@ -161,9 +181,25 @@ Examples:
 
 Get a sync by its name.
 
-See the [Sync API](#sync-api) docs for available properties/methods.
-
 - __name__ {String} name of the sync operation to get
+
+Returns the Promise that resolves with success of the sync operation.
+
+There are some properties/methods on the returned Promise. See the [Sync API](#sync-api) for more details.
+
+Example:
+
+    fetchSync('SendMessage', '/message', { body: 'Hello, World!' })
+        
+    const sync = fetchSync.get('SendMessage')
+        
+    sync.then((response) => {
+      if (response.ok) {
+        alert(`Your message was sent at ${new Date(sync.syncedOn).toDateString()}.`
+      } else {
+        alert('Message failed to send.')
+      }
+    })
 
 ### `fetchSync.getAll() : Array<Promise>`
 
@@ -171,11 +207,22 @@ Get all sync operations.
 
 Returns an array of all sync operations (named and unnamed).
 
+Example:
+
+    fetchSync
+      .getAll()
+      .forEach((sync) => sync.cancel())
+
 ### `fetchSync.cancel(name) : Promise`
 
 Cancel the sync with the given `name`.
 
 - __name__ {String} name of the sync operation to cancel
+
+Example:
+
+    fetchSync('Update', '/update', { body })
+    fetchSync.cancel('Update')
 
 ### `fetchSync.cancelAll() : Promise`
 
@@ -189,9 +236,18 @@ Cancels the sync operation.
 
 Returns a Promise of success of the cancellation.
 
+Example:
+
+    const sync = fetchSync.get('Update')
+    sync.cancel()
+
 ### `sync.getResponse() : Response`
 
 Response retrieved when the operation was completed. Or null if the operation is incomplete.
+
+    const sync = fetchSync.get('Update')
+    const response = sync.getResponse()
+    console.log(response ? response.ok ? 'Response OK' : 'Response not OK' : 'No response')
 
 ### `sync.id`
 
