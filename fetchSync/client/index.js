@@ -124,8 +124,8 @@ function fetchSync_init (options) {
       if (options.forceUpdate) {
         registration.update()
       }
+      return store.dispatch(setServiceWorker(navigator.serviceWorker.controller))
     })
-    .then(() => store.dispatch(setServiceWorker(navigator.serviceWorker.controller)))
     .then(() => store.dispatch(openCommsChannel()))
     .catch((err) => {
       console.warn('fetchSync: failed to register the Service Worker')
