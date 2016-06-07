@@ -48,13 +48,13 @@ export function cancelSync (sync) {
  */
 export function openCommsChannel () {
   return (dispatch, getState) => {
-    const { serviceWorker, commsChannel } = getState()
-
-    if (!serviceWorker) {
-      return Promise.reject(new Error('No service worker'))
-    }
-
     return new Promise((resolve, reject) => {
+      const { serviceWorker, commsChannel } = getState()
+
+      if (!serviceWorker) {
+        return reject(new Error('No service worker'))
+      }
+
       const messageChannel = new MessageChannel()
       let complete = false
 
