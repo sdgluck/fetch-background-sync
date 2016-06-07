@@ -38,7 +38,9 @@
 
     navigator.serviceWorker
         .register('./sw.js', { scope: './' })
-        .then(fetchSync.init)
+        .then(function () {
+            return fetchSync.init()
+        })
         .then(function () {
             waitingWorker.style.display = 'none'
             main.style.display = 'block'
