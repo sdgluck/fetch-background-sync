@@ -70,8 +70,13 @@
             .then(serialiseResponse)
             .then((response) => {
               const syncedOn = Date.now()
+              
               store.put({ ...sync, response, syncedOn })
               channel.postMessage({ id, lastChance, response })
+              
+              if (!sync.name) {
+                store.remove(id)
+              }
             })
         })
     )

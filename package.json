@@ -1,6 +1,6 @@
 {
   "name": "fetch-sync",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A handy wrapper for the Background Sync API",
   "jsnext:main": "lib/client/index.js",
   "author": "Sam Gluck <sdgluck@gmail.com>",
