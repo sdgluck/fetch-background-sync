@@ -145,6 +145,7 @@ function fetchSync_init (options = null) {
     .catch((err) => {
       hasStartedInit = false
       console.warn('fetchSync initialisation failed: ' + err.message)
+      throw err
     })
     .then(() => commsChannel.promise)
 }
