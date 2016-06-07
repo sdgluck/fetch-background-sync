@@ -31,7 +31,7 @@
     var waitingResult = document.querySelector('#waiting-result')
     var result = document.querySelector('#result')
 
-    var request = false
+    var request = null
 
     navigator.serviceWorker
         .register('./sw.js', { scope: './' })
@@ -40,6 +40,7 @@
             main.style.display = 'block'
         })
         .catch(function (err) {
+            waitingWorker.style.display = 'none'
             main.style.display = 'none'
             error.style.display = 'block'
             error.innerText = err.message
@@ -50,10 +51,9 @@
             return
         }
 
-        request = true
         waitingResult.style.display = 'block'
 
-        fetchSync('http://thecatapi.com/api/images/get?format=src&type=gif')
+        request = fetchSync('http://thecatapi.com/api/images/get?format=src&type=gif')
             .then(function (response) {
                 return response.blob()
             })
