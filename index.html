@@ -35,6 +35,8 @@
 
     var request = null
 
+    fetchSync.init()
+
     navigator.serviceWorker
         .register('./sw.js', { scope: './' })
         .then(function () {
