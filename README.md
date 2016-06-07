@@ -21,7 +21,8 @@ Check out a [live demo here](https://sdgluck.github.io/fetch-sync/).
 - [Support](#support)
 - __[Features](#features)__
 - __[Initialisation](#initialisation)__
-- __[Usage](#client-api)__
+- __[Usage](#usage)__
+- __[Sync API](#sync-api)__
 - [Todo](#todo)
 - [Test](#test)
 - [Development](#development)
@@ -117,8 +118,6 @@ Example:
           }
         })
 
-<p>______</p>
-
 ### `fetchSync([name, ]request[, options]) : Promise<Response>`
 
 Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.md#one-off-synchronization) Background Sync operation.
@@ -156,15 +155,13 @@ Examples:
           new Request('/messages')
         )
 
-<p>______</p>
-
 ### `fetchSync.get(name) : Promise`
 
 Get a sync by its name.
 
-- __name__ {String} name of the sync operation to get
+See the [Sync API](#sync-api) docs for available properties/methods.
 
-<p>______</p>
+- __name__ {String} name of the sync operation to get
 
 ### `fetchSync.getAll() : Array<Promise>`
 
@@ -172,67 +169,51 @@ Get all sync operations.
 
 Returns an array of all sync operations (named and unnamed).
 
-<p>______</p>
-
 ### `fetchSync.cancel(name) : Promise`
 
 Cancel the sync with the given `name`.
 
 - __name__ {String} name of the sync operation to cancel
 
-<p>______</p>
-
 ### `fetchSync.cancelAll() : Promise`
 
 Cancel all syncs, named and unnamed.
 
-## Example
+## Sync API
 
-    import fetchSync from 'fetch-sync'
+### `sync.cancel() : Promise`
 
-    // Initialise...
+Cancels the sync operation.
 
-    fetchSync.init({
-      workerUrl: 'fetch-sync.sw.js',
-      workerOptions: {
-        scope: 'http://localhost:8000'
-      }
-    })
+Returns a Promise of success of the cancellation.
 
-    // Make a request...
+### `sync.getResponse() : Response`
 
-    /**
-     * Save important work using a `sync` operation
-     * to ensure request gets made later if
-     * UA has lost connectivity.
-     */
-    function saveImportantWork () {
-      return fetchSync('/important-work', {
-        body: 'so important',
-        method: 'POST'
-      }).then((response) => {
-        console.log('Response ' + response.statusText)
-      })
-    }
+Response retrieved when the operation was completed. Or null if the operation is incomplete.
 
-Then, [sometime later :alarm_clock:](https://www.youtube.com/watch?v=K9yuDdCyQhs)...
+### `sync.id`
 
-    // UA loses connectivity
+The unique ID of the sync operation. This will be its name if it has one.
 
-    saveImportantWork()
+### `sync.name`
 
-    // UA regains connectivity
+The name of the sync operation if it has one.
 
-    // Console
-    // > Response OK
+### `sync.createdOn`
+
+The time that the sync operation was created.
+
+### `sync.syncedOn`
+
+The time that the sync operation was completed.
+
+Useful for named syncs that you want to retrieve later on.
 
 ## Todo
 
 - [WIP] Add support for periodicSync operations.
-(See the [`periodic-sync-support`](https://github.com/sdgluck/fetch-sync/tree/periodic-sync-support) branch.)
-- Reduce size of library by dropping some dependencies, e.g. is using Redux overkill?
-- Implement some way of integrating into existing service worker infrastructures.
-Maybe using [service-worker-ware](https://github.com/fxos-components/serviceworkerware)?
+(See the outdated [`periodic-sync-support` branch](https://github.com/sdgluck/fetch-sync/tree/periodic-sync-support).)
+- Reduce size of client and SW bundles.
 
 ## Test
 
