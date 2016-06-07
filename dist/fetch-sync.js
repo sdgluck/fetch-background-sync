@@ -479,7 +479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var messageChannel = new MessageChannel();
 	      var complete = false;
 	
-	      serviceWorker.controller.postMessage((0, _creators.requestOpenComms)(), [messageChannel.port2]);
+	      serviceWorker.postMessage((0, _creators.requestOpenComms)(), [messageChannel.port2]);
 	
 	      messageChannel.port1.onmessage = function (event) {
 	        complete = true;
