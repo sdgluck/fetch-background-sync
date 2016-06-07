@@ -46,6 +46,7 @@
             main.style.display = 'none'
             error.style.display = 'block'
             error.innerText = err.message
+            throw err
         })
 
     function makeRequest () {
@@ -68,6 +69,7 @@
                 main.style.display = 'none'
                 error.style.display = 'block'
                 error.innerText = err.message
+                throw err
             })
     }
 </script>
