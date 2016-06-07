@@ -8,6 +8,12 @@
   <div id="mocha"></div>
   <script src="dist/fetch-sync.js"></script>
   <script>
+    if (!navigator.serviceWorker.controller) {
+      // Force refresh so we have an activated worker
+      window.location = window.location
+    }
+  </script>
+  <script>
     fetchSync.init({
       forceUpdate: true,
       workerUrl: '/dist/fetch-sync.sw.js',
