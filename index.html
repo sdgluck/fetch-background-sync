@@ -1,81 +1,81 @@
 <!doctype html>
 <html>
 <head>
-    <script src="node_modules/fetch-sync/dist/fetch-sync.js"></script>
-    <style>
-        #error { display: none; color: red; }
-        #main { display: none; }
-        #waiting-result { display: none; }
-    </style>
+  <script src="node_modules/fetch-sync/dist/fetch-sync.js"></script>
+  <style>
+    #error { display: none; color: red; }
+    #main { display: none; }
+    #waiting-result { display: none; }
+  </style>
 </head>
 <body>
 <div id="error"></div>
 <p id="waiting-worker">Waiting for service worker... (refresh the page?)</p>
 <div id="main">
-    <ol>
-        <li>Go offline
-        <li>Click the button below
-        <li>Go online
-        <li>Tada!
-    </ol>
-    <button id="make-request" onclick="makeRequest()">Make request</button>
-    <p id="waiting-result">Waiting for connectivity...</p>
-    <img id="result" />
+  <ol>
+    <li>Go offline
+    <li>Click the button below
+    <li>Go online
+    <li>Tada!
+  </ol>
+  <button id="make-request" onclick="makeRequest()">Make request</button>
+  <p id="waiting-result">Waiting for connectivity...</p>
+  <img id="result" />
 </div>
 <script>
-    /* global fetchSync:false */
+  /* global fetchSync:false */
 
-    var GET_ME_A_CAT = 'https://thecatapi.com/api/images/get?format=src&type=gif'
+  var GET_ME_A_CAT = 'https://thecatapi.com/api/images/get?format=src&type=gif'
 
-    var main = document.querySelector('#main')
-    var error = document.querySelector('#error')
-    var waitingWorker = document.querySelector('#waiting-worker')
-    var waitingResult = document.querySelector('#waiting-result')
-    var makeRequestBtn = document.querySelector('#make-request')
-    var result = document.querySelector('#result')
+  var main = document.querySelector('#main')
+  var error = document.querySelector('#error')
+  var waitingWorker = document.querySelector('#waiting-worker')
+  var waitingResult = document.querySelector('#waiting-result')
+  var makeRequestBtn = document.querySelector('#make-request')
+  var result = document.querySelector('#result')
 
-    var request = null
+  var request = null
 
-    navigator.serviceWorker
-        .register('./sw.js', { scope: './' })
-        .then(function () {
-            return fetchSync.init()
-        })
-        .then(function () {
-            waitingWorker.style.display = 'none'
-            main.style.display = 'block'
-        })
-        .catch(function (err) {
-            main.style.display = 'none'
-            error.style.display = 'block'
-            error.innerText = err.message
-            throw err
-        })
+  navigator.serviceWorker
+    .register('./sw.js', { scope: './' })
+    .then(function () {
+      return fetchSync.init()
+    })
+    .then(function () {
+      waitingWorker.style.display = 'none'
+      main.style.display = 'block'
+    })
+    .catch(function (err) {
+      main.style.display = 'none'
+      error.style.display = 'block'
+      error.innerText = err.message
+      throw err
+    })
 
-    function makeRequest () {
-        if (request) {
-            return
-        }
-
-        waitingResult.style.display = 'block'
-
-        request = fetchSync(GET_ME_A_CAT)
-            .then(function (response) {
-                return response.blob()
-            })
-            .then(function (blob) {
-                result.src = URL.createObjectURL(blob)
-                request = false
-                waitingResult.style.display = 'none'
-                makeRequestBtn.style.display = 'none'
-            })
-            .catch(function (err) {
-                main.style.display = 'none'
-                error.style.display = 'block'
-                error.innerText = err.message
-                throw err
-            })
+  function makeRequest () {
+    if (request) {
+      return
     }
+
+    waitingResult.style.display = 'block'
+
+    request = fetchSync(GET_ME_A_CAT)
+      .then(function (response) {
+        return response.blob()
+      })
+      .then(function (blob) {
+        result.src = URL.createObjectURL(blob)
+        request = false
+        waitingResult.style.display = 'none'
+        makeRequestBtn.style.display = 'none'
+      })
+      .catch(function (err) {
+        main.style.display = 'none'
+        error.style.display = 'block'
+        error.innerText = err.message
+        throw err
+      })
+  }
 </script>
 </body>
 </html>

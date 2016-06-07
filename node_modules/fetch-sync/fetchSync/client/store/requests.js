@@ -69,7 +69,7 @@ export function openCommsChannel () {
         // open and send all named syncs to the client
         if (commsChannel.status === CommsChannelStatus.CLOSED) {
           dispatch(setCommsOpen(true))
-          dispatch(addSyncs(event.data.data || []))
+          dispatch(addSyncs(event.data || []))
         } else {
           dispatch(receiveFetchResponse(event))
         }
