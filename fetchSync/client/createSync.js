@@ -14,7 +14,7 @@ export default function createSync (name, request, options = {}) {
     name,
     request,
     options,
-    id: uId(),
+    id: name || uId(),
     createdOn: Date.now(),
     syncedOn: null,
     response: null

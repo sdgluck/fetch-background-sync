@@ -1,7 +1,5 @@
 'use strict'
 
-import { Responses } from '../actionTypes'
-
 export default class Channel {
   constructor (worker, messageHandlers) {
     worker.onmessage = this.onMessageEvent.bind(this)
@@ -34,13 +32,6 @@ export default class Channel {
   onMessageEvent (event) {
     return this
       .handleMessage(event)
-      .catch((err) => this.postMessage({
-        type: Responses.FAILURE,
-        data: { error: err.message }
-      }, event.ports[0]))
-      .then((data) => this.postMessage({
-        type: Responses.SUCCESS,
-        data
-      }, event.ports[0]))
+      .then((data) => this.postMessage(data, event.ports[0]))
   }
 }
