@@ -1,6 +1,6 @@
 {
   "name": "fetch-sync",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A handy wrapper for the Background Sync API",
   "jsnext:main": "lib/client/index.js",
   "author": "Sam Gluck <sdgluck@gmail.com>",
@@ -15,7 +15,7 @@
     "build:umd": "webpack --config webpack.development.config.js",
     "build:umd:min": "webpack --config webpack.production.config.js",
     "watch": "webpack --progress --colors --watch --config webpack.development.config.js",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist lib",
     "test": "node test/server.js",
     "prepublish": "npm run lint && npm run clean && npm run build && npm run build:umd && npm run build:umd:min"
   },
