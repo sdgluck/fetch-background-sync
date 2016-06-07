@@ -18,7 +18,7 @@
         <li>Go online
         <li>Tada!
     </ol>
-    <button onclick="makeRequest()">Make request</button>
+    <button id="make-request" onclick="makeRequest()">Make request</button>
     <p id="waiting-result">Waiting for connectivity...</p>
     <img id="result" />
 </div>
@@ -31,6 +31,7 @@
     var error = document.querySelector('#error')
     var waitingWorker = document.querySelector('#waiting-worker')
     var waitingResult = document.querySelector('#waiting-result')
+    var makeRequest = document.querySelector('#make-request')
     var result = document.querySelector('#result')
 
     var request = null
@@ -66,6 +67,7 @@
                 result.src = URL.createObjectURL(blob)
                 request = false
                 waitingResult.style.display = 'none'
+                makeRequest.style.display = 'none'
             })
             .catch(function (err) {
                 main.style.display = 'none'
