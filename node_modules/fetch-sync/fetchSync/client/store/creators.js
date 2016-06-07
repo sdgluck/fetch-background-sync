@@ -1,7 +1,7 @@
 'use strict'
 
 import { ADD_SYNC, ADD_SYNCS, REMOVE_SYNC, REMOVE_ALL_SYNCS, SET_COMMS_OPEN,
-  SET_SERVICE_WORKER, Requests } from '/fetchSync/actionTypes'
+  SET_SERVICE_WORKER, Requests } from '../../actionTypes'
 
 // ---
 // Sync action creators
