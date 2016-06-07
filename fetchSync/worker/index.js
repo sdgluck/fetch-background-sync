@@ -9,7 +9,7 @@
 
   const Channel = require('./Channel')
   const { Requests, Responses } = require('../actionTypes')
-  
+
   const store = new IDBStore({
     dbVersion: 1,
     keyPath: 'id',
