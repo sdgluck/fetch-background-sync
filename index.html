@@ -31,7 +31,7 @@
     var error = document.querySelector('#error')
     var waitingWorker = document.querySelector('#waiting-worker')
     var waitingResult = document.querySelector('#waiting-result')
-    var makeRequest = document.querySelector('#make-request')
+    var makeRequestBtn = document.querySelector('#make-request')
     var result = document.querySelector('#result')
 
     var request = null
@@ -67,7 +67,7 @@
                 result.src = URL.createObjectURL(blob)
                 request = false
                 waitingResult.style.display = 'none'
-                makeRequest.style.display = 'none'
+                makeRequestBtn.style.display = 'none'
             })
             .catch(function (err) {
                 main.style.display = 'none'
