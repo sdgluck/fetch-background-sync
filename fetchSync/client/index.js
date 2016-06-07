@@ -129,7 +129,7 @@ function fetchSync_init (options = null) {
     })
     .then((registration) => {
       if (registration && options) {
-        controller = registration.active
+        controller = registration
       } else if (!registration && !options) {
         return navigator.serviceWorker
           .register(options.workerUrl, options.workerOptions)
