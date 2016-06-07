@@ -31,10 +31,11 @@ Check out a [live demo here](https://sdgluck.github.io/fetch-sync/).
 
 ## Requirements
 
-The library utilises some experimental/new technologies so is currently only operational in the latest versions of
-[Chrome Canary](https://www.google.co.uk/chrome/browser/canary.html) with the `experimental-web-platform-features`
-flag enabled. As experimental technologies are prone to change, so is this library! (Though I hope the API can remain
-the same.)
+The library utilises some new technologies so currently only works in some browsers. It definitely works in
+[Chrome Canary](https://www.google.co.uk/chrome/browser/canary.html)
+with the `experimental-web-platform-features` flag enabled.
+
+The browser must support:
 
 - [Background Sync](https://github.com/WICG/BackgroundSync/blob/master/explainer.md)
 - [Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
@@ -126,9 +127,10 @@ Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.
 - __request__ {String|Request} URL or an instance of fetch Request
 - [__options__] {Object} _(optional)_ [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch) object
 
-Returns a Promise that resolves on success of the fetch request. If called with a `name` the response can be retrieved
-at a later date (e.g. when the user leaves and returns to the application). Without a name, the fetch request will be
-performed as usual but the response will be discarded and not made available after the session in which it was declared.
+Returns a Promise that resolves on success of the fetch request.
+
+If called with a `name` the response will be stored and can be retrieved later using `fetchSync.get(<name>)` and then
+`sync.getResponse()`. See the [Sync API](#sync-api) for more details.
 
 Examples:
 
