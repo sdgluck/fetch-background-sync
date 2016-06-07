@@ -63,6 +63,8 @@
                 waitingResult.style.display = 'none'
             })
             .catch(function (err) {
+                main.style.display = 'none'
+                error.style.display = 'block'
                 error.innerText = err.message
             })
     }
