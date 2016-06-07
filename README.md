@@ -57,6 +57,29 @@ Chrome Canary | Chrome | Firefox | IE | Opera | Safari
 
 - Named sync operations have their response stored within an IndexedDB store.
 
+## Initialise
+
+__Existing Service Worker__
+
+If your application already uses a Service Worker, you can import the Fetch Sync worker using `importScripts`:
+
+    importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
+
+__No Service Worker__
+
+Option 1) _Using Service-Worker-Allowed header:_
+
+Fetch Sync can handle registration if you don't use a SW already.
+
+- First, serve the Fetch Sync worker file with a header `"Service-Worker-Allowed : /"`.
+
+- Second, see the example under [Usage](#usage) for the `fetchSync.init()` method.
+
+Option 2) _No header configuration:_
+
+To avoid configuring headers, create a Service Worker script in the root of your project and use the method above
+for 'Existing Service Worker'.
+
 ## Usage
 
 ### `fetchSync.init([options]) : Promise`
@@ -92,7 +115,7 @@ Example:
         // Initialise, passing in worker lib location...
 
         fetchSync.init({
-          workerUrl: '/node_modules/fetch-sync/dist/fetch-sync.sw.js',
+          workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
           workerOptions: {
             scope: '<website address>' // e.g. 'http://localhost:8000'
           }

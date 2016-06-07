@@ -11,10 +11,7 @@ module.exports = {
           'stage-0'
         ],
         plugins: [
-          'add-module-exports',
-          ['babel-root-import', {
-            rootPathPrefix: '/'
-          }]
+          'add-module-exports'
         ]
       }
     )

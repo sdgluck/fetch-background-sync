@@ -8,9 +8,9 @@ import createLogger from 'redux-logger'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 
 import { SET_COMMS_OPEN, SET_SERVICE_WORKER, ADD_SYNC,
-  ADD_SYNCS, REMOVE_SYNC, REMOVE_ALL_SYNCS } from '/fetchSync/actionTypes'
+  ADD_SYNCS, REMOVE_SYNC, REMOVE_ALL_SYNCS } from '../../actionTypes'
 
-import { CommsChannelStatus } from '/fetchSync/constants'
+import { CommsChannelStatus } from '../../constants'
 
 const middlewares = [thunk]
 

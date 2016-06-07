@@ -1,6 +1,6 @@
 'use strict'
 
-import { Responses } from '/fetchSync/actionTypes'
+import { Responses } from '../actionTypes'
 
 export default class Channel {
   constructor (worker, messageHandlers) {

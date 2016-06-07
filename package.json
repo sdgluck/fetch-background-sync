@@ -33,6 +33,15 @@
     "proxy",
     "proxies"
   ],
+  "dependencies": {
+    "idb-wrapper": "^1.6.2",
+    "mini-defer": "0.0.2",
+    "redux": "^3.3.1",
+    "redux-logger": "^2.6.0",
+    "redux-thunk": "^1.0.3",
+    "serialise-request": "0.0.7",
+    "serialise-response": "0.0.4",
+  },
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.5.2",
@@ -44,15 +53,8 @@
     "catch-and-match": "^0.2.13",
     "chai": "^3.4.1",
     "express": "^4.13.4",
-    "idb-wrapper": "^1.6.2",
-    "mini-defer": "0.0.2",
     "mocha": "^2.3.4",
     "moment": "^2.12.0",
-    "redux": "^3.3.1",
-    "redux-logger": "^2.6.0",
-    "redux-thunk": "^1.0.3",
-    "serialise-request": "0.0.7",
-    "serialise-response": "0.0.4",
     "standard": "^6.0.5",
     "webpack": "^2.0.1-beta"
   },

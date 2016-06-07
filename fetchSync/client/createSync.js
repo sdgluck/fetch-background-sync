@@ -2,9 +2,9 @@
 
 import defer from 'mini-defer'
 
-import store from '/fetchSync/client/store'
-import { SyncIdPrefix } from '/fetchSync/constants'
-import { cancelSync } from '/fetchSync/client/store/requests'
+import store from './store'
+import { SyncIdPrefix } from '../constants'
+import { cancelSync } from './store/requests'
 
 export default function createSync (name, request, options = {}) {
   let sync = syncInitialObject()

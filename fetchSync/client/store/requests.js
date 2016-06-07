@@ -6,11 +6,11 @@ import defer from 'mini-defer'
 import serialiseResponse from 'serialise-response'
 
 import { addSync, addSyncs, removeSync, setCommsOpen, removeAllSyncs, requestOpenComms,
-  requestCancelSync, requestRegisterSync, requestCancelAllSyncs } from '/fetchSync/client/store/creators'
+  requestCancelSync, requestRegisterSync, requestCancelAllSyncs } from './creators'
 
-import { CommsChannelStatus } from '/fetchSync/constants'
-import { Responses } from '/fetchSync/actionTypes'
-import store from '/fetchSync/client/store'
+import { CommsChannelStatus } from '../../constants'
+import { Responses } from '../../actionTypes'
+import store from './index'
 
 export function registerSync (sync) {
   return (dispatch, getState) => {
@@ -82,7 +82,10 @@ export function openCommsChannel () {
       setTimeout(() => {
         if (!complete) {
           dispatch(setCommsOpen(false))
-          reject(new Error('Connecting to Worker timed out'))
+          reject(new Error(
+            'Connecting to Worker timed out. ' +
+            'See Initialisation documentation.'
+          ))
         }
       }, 2000)
     })
