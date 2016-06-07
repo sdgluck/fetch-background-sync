@@ -45,21 +45,27 @@
 
   var request = null
 
-  navigator.serviceWorker
-    .register('./sw.js', { scope: './' })
-    .then(function () {
-      return fetchSync.init()
-    })
-    .then(function () {
-      waitingWorker.style.display = 'none'
-      main.style.display = 'block'
-    })
-    .catch(function (err) {
-      main.style.display = 'none'
-      error.style.display = 'block'
-      error.innerText = err.message
-      throw err
-    })
+  if (!navigator.serviceWorker) {
+    main.style.display = 'none'
+    error.style.display = 'block'
+    error.innerText = 'Service Workers not supported :\'-('
+  } else {
+    navigator.serviceWorker
+      .register('./sw.js', {scope: './'})
+      .then(function () {
+        return fetchSync.init()
+      })
+      .then(function () {
+        waitingWorker.style.display = 'none'
+        main.style.display = 'block'
+      })
+      .catch(function (err) {
+        main.style.display = 'none'
+        error.style.display = 'block'
+        error.innerText = err.message
+        throw err
+      })
+  }
 
   function makeRequest () {
     if (request) {
