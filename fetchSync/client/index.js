@@ -130,11 +130,11 @@ function fetchSync_init (options = null) {
     .then((registration) => {
       if (registration && options) {
         controller = registration
-      } else if (!registration && !options) {
+      } else if (!registration && options) {
         return navigator.serviceWorker
           .register(options.workerUrl, options.workerOptions)
           .then((registration) => options.forceUpdate && registration.update())
-      } else if (!controller && !options) {
+      } else if (!registration && !options) {
         throw new Error('no active service worker or configuration passed to install one')
       }
     })
