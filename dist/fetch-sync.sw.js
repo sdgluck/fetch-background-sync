@@ -1657,117 +1657,113 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	/* global self:false, fetch:false, __DEV__:false */
-	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _ref3;
-	
-	var _idbWrapper = __webpack_require__(14);
-	
-	var _idbWrapper2 = _interopRequireDefault(_idbWrapper);
-	
-	var _serialiseRequest = __webpack_require__(1);
-	
-	var _serialiseRequest2 = _interopRequireDefault(_serialiseRequest);
-	
-	var _serialiseResponse = __webpack_require__(3);
-	
-	var _serialiseResponse2 = _interopRequireDefault(_serialiseResponse);
-	
-	var _Channel = __webpack_require__(13);
-	
-	var _Channel2 = _interopRequireDefault(_Channel);
-	
-	var _actionTypes = __webpack_require__(0);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
-	var store = new _idbWrapper2.default({
-	  dbVersion: 1,
-	  keyPath: 'id',
-	  storeName:  true ? '$$syncs_' + Date.now() : '$$syncs'
-	});
+	(function () {
+	  'use strict';
 	
-	var channel = new _Channel2.default(self, (_ref3 = {}, _defineProperty(_ref3, _actionTypes.Requests.OPEN_COMMS, function (event) {
-	  channel.setDefaultPort(event.ports[0]);
-	  return Promise.resolve();
-	}), _defineProperty(_ref3, _actionTypes.Requests.REGISTER_SYNC, function (_ref) {
-	  var data = _ref.data;
+	  /* global self:false, require:false, fetch:false, __DEV__:false */
 	
-	  return registerSync(data.sync).then(function () {
-	    return addSync(data.sync);
+	  var _ref3;
+	
+	  var IDBStore = __webpack_require__(14);
+	  var serialiseRequest = __webpack_require__(1);
+	  var serialiseResponse = __webpack_require__(3);
+	
+	  var Channel = __webpack_require__(13);
+	
+	  var _require = __webpack_require__(0);
+	
+	  var Requests = _require.Requests;
+	  var Responses = _require.Responses;
+	
+	
+	  var store = new IDBStore({
+	    dbVersion: 1,
+	    keyPath: 'id',
+	    storeName:  true ? '$$syncs_' + Date.now() : '$$syncs'
 	  });
-	}), _defineProperty(_ref3, _actionTypes.Requests.CANCEL_SYNC, function (_ref2) {
-	  var data = _ref2.data;
 	
-	  return new Promise(store.remove.bind(store, data.id));
-	}), _defineProperty(_ref3, _actionTypes.Requests.CANCEL_ALL, function () {
-	  return new Promise(store.getAll.bind(store)).then(function (syncs) {
-	    return new Promise(store.removeBatch.bind(store, syncs.map(function (sync) {
-	      return sync.id;
-	    })));
-	  });
-	}), _ref3));
+	  var channel = new Channel(self, (_ref3 = {}, _defineProperty(_ref3, Requests.OPEN_COMMS, function (event) {
+	    channel.setDefaultPort(event.ports[0]);
+	    return Promise.resolve();
+	  }), _defineProperty(_ref3, Requests.REGISTER_SYNC, function (_ref) {
+	    var data = _ref.data;
 	
-	function registerSync(sync) {
-	  return self.registration['sync'].register(sync.id);
-	}
-	
-	function addSync(sync) {
-	  return new Promise(store.put.bind(store, sync)).catch(function (err) {
-	    if (!/key already exists/i.test(err.message)) {
-	      throw err;
-	    }
-	  });
-	}
-	
-	function syncEvent(event) {
-	  event.waitUntil(new Promise(store.get.bind(store, event.tag)).then(function (sync) {
-	    if (!sync) {
-	      event.registration && event.registration.unregister();
-	      return;
-	    }
-	
-	    var id = sync.id;
-	    var lastChance = event.lastChance;
-	    var request = _serialiseRequest2.default.deserialise(sync.request);
-	
-	    return fetch(request).then(_serialiseResponse2.default).then(function (response) {
-	      var syncedOn = Date.now();
-	      store.put(_extends({}, sync, { response: response, syncedOn: syncedOn }));
-	      channel.postMessage({
-	        type: _actionTypes.Responses.SUCCESS,
-	        data: { id: id, lastChance: lastChance, response: response }
-	      });
-	    }).catch(function (err) {
-	      store.remove(id);
-	      channel.postMessage({
-	        type: _actionTypes.Responses.FAILURE,
-	        data: { error: err.message }
-	      });
+	    return registerSync(data.sync).then(function () {
+	      return addSync(data.sync);
 	    });
-	  }));
-	}
+	  }), _defineProperty(_ref3, Requests.CANCEL_SYNC, function (_ref2) {
+	    var data = _ref2.data;
 	
-	// The 'sync' event fires when connectivity is restored or already available to the UA.
-	self.addEventListener('sync', syncEvent);
+	    return new Promise(store.remove.bind(store, data.id));
+	  }), _defineProperty(_ref3, Requests.CANCEL_ALL, function () {
+	    return new Promise(store.getAll.bind(store)).then(function (syncs) {
+	      return new Promise(store.removeBatch.bind(store, syncs.map(function (sync) {
+	        return sync.id;
+	      })));
+	    });
+	  }), _ref3));
 	
-	// The 'activate' event is fired when the service worker becomes operational.
-	// For example, after a refresh after install, or after all pages using
-	// the older version of the worker have closed after upgrade of the worker.
-	self.addEventListener('activate', function activateEvent(event) {
-	  event.waitUntil(self.clients.claim());
-	});
+	  function registerSync(sync) {
+	    return self.registration['sync'].register(sync.id);
+	  }
 	
-	// The 'install' event is fired when the service worker has been installed.
-	// This does not mean that the service worker is operating, as the UA will wait
-	// for all pages to close that are using older versions of the worker.
-	self.addEventListener('install', function installEvent(event) {
-	  event.waitUntil(self.skipWaiting());
-	});
+	  function addSync(sync) {
+	    return new Promise(store.put.bind(store, sync)).catch(function (err) {
+	      if (!/key already exists/i.test(err.message)) {
+	        throw err;
+	      }
+	    });
+	  }
+	
+	  function syncEvent(event) {
+	    event.waitUntil(new Promise(store.get.bind(store, event.tag)).then(function (sync) {
+	      if (!sync) {
+	        event.registration && event.registration.unregister();
+	        return;
+	      }
+	
+	      var id = sync.id;
+	      var lastChance = event.lastChance;
+	      var request = serialiseRequest.deserialise(sync.request);
+	
+	      return fetch(request).then(serialiseResponse).then(function (response) {
+	        var syncedOn = Date.now();
+	        store.put(_extends({}, sync, { response: response, syncedOn: syncedOn }));
+	        channel.postMessage({
+	          type: Responses.SUCCESS,
+	          data: { id: id, lastChance: lastChance, response: response }
+	        });
+	      }).catch(function (err) {
+	        store.remove(id);
+	        channel.postMessage({
+	          type: Responses.FAILURE,
+	          data: { error: err.message }
+	        });
+	      });
+	    }));
+	  }
+	
+	  // The 'sync' event fires when connectivity is restored or already available to the UA.
+	  self.addEventListener('sync', syncEvent);
+	
+	  // The 'activate' event is fired when the service worker becomes operational.
+	  // For example, after a refresh after install, or after all pages using
+	  // the older version of the worker have closed after upgrade of the worker.
+	  self.addEventListener('activate', function activateEvent(event) {
+	    event.waitUntil(self.clients.claim());
+	  });
+	
+	  // The 'install' event is fired when the service worker has been installed.
+	  // This does not mean that the service worker is operating, as the UA will wait
+	  // for all pages to close that are using older versions of the worker.
+	  self.addEventListener('install', function installEvent(event) {
+	    event.waitUntil(self.skipWaiting());
+	  });
+	})();
 
 /***/ }
 /******/ ])

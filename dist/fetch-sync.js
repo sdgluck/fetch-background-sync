@@ -421,9 +421,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _actionTypes = __webpack_require__(0);
 	
-	var _store = __webpack_require__(2);
+	var _index = __webpack_require__(2);
 	
-	var _store2 = _interopRequireDefault(_store);
+	var _index2 = _interopRequireDefault(_index);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -500,7 +500,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      setTimeout(function () {
 	        if (!complete) {
 	          dispatch((0, _creators.setCommsOpen)(false));
-	          reject(new Error('Connecting to Worker timed out'));
+	          reject(new Error('Connecting to Worker timed out. ' + 'See Initialisation documentation.'));
 	        }
 	      }, 2000);
 	    });
@@ -514,7 +514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Promise}
 	 */
 	function postMessage(data) {
-	  var _store$getState = _store2.default.getState();
+	  var _store$getState = _index2.default.getState();
 	
 	  var serviceWorker = _store$getState.serviceWorker;
 	
@@ -1177,9 +1177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	fetchSync.init = function fetchSync_init(options) {
 	  if (hasStartedInit) {
 	    throw new Error('fetchSync.init() called multiple times');
-	  } else if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== 'object') {
-	    throw new Error('Expecting options to be an object');
-	  } else if (!options.workerUrl) {
+	  } else if (options && !options.workerUrl) {
 	    throw new Error('Expecting `workerUrl` in options object');
 	  }
 	
