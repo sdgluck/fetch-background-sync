@@ -46,7 +46,6 @@
             main.style.display = 'block'
         })
         .catch(function (err) {
-            waitingWorker.style.display = 'none'
             main.style.display = 'none'
             error.style.display = 'block'
             error.innerText = err.message
