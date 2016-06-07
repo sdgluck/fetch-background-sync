@@ -65,20 +65,16 @@ If your application already uses a Service Worker, you can import the Fetch Sync
 
     importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
 
+And then call `fetchSync.init()` somewhere in your application's initialisation procedure.
+
 __No Service Worker__
 
-Option 1) _Using Service-Worker-Allowed header:_
+Fetch Sync can handle registration if you don't use a SW already...
 
-Fetch Sync can handle registration if you don't use a SW already.
+Either serve the Fetch Sync worker file with a header `"Service-Worker-Allowed : /"`, or to avoid configuring headers,
+create a Service Worker script in the root of your project and use the method above for 'Existing Service Worker'.
 
-- First, serve the Fetch Sync worker file with a header `"Service-Worker-Allowed : /"`.
-
-- Second, see the example under [Usage](#usage) for the `fetchSync.init()` method.
-
-Option 2) _No header configuration:_
-
-To avoid configuring headers, create a Service Worker script in the root of your project and use the method above
-for 'Existing Service Worker'.
+Then see the example under [Usage](#usage) for the `fetchSync.init()` method.
 
 ## Usage
 
@@ -86,7 +82,7 @@ for 'Existing Service Worker'.
 
 Initialise fetchSync.
 
-- __options__ {Object} options object
+- __options__ {Object} _(optional)_ options object
 
         options {
           // The URL of the fetchSync worker script.

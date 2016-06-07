@@ -115,7 +115,7 @@ function fetchSync_init (options = null) {
   }
 
   const { commsChannel } = store.getState()
-  const controller = navigator.serviceWorker.controller
+  let controller = navigator.serviceWorker.controller
 
   hasStartedInit = true
 
@@ -127,8 +127,10 @@ function fetchSync_init (options = null) {
         return navigator.serviceWorker.ready
       }
     })
-    .then((controller) => {
-      if (!controller && options) {
+    .then((registration) => {
+      if (registration && options) {
+        controller = registration.active
+      } else if (!registration && !options) {
         return navigator.serviceWorker
           .register(options.workerUrl, options.workerOptions)
           .then((registration) => options.forceUpdate && registration.update())
@@ -137,7 +139,7 @@ function fetchSync_init (options = null) {
       }
     })
     .then(() => {
-      store.dispatch(setServiceWorker(navigator.serviceWorker.controller))
+      store.dispatch(setServiceWorker(controller))
       store.dispatch(openCommsChannel())
     })
     .catch((err) => {
