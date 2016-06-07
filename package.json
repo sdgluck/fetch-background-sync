@@ -1,7 +1,8 @@
 {
   "title": "fetch-sync-example",
   "author": "Sam Gluck <sdgluck@gmail.com>",
+  "private": true,
   "dependencies": {
-    "fetch-sync": "^0.1.3"
+    "fetch-sync": "^0.1.5"
   }
 }
