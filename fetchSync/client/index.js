@@ -102,7 +102,7 @@ export default function fetchSync (request, options, extra) {
  * @param {Object} options
  */
 fetchSync.init =
-function fetchSync_init (options) {
+function fetchSync_init (options = null) {
   if (hasStartedInit) {
     throw new Error('fetchSync.init() called multiple times')
   } else if (options && !options.workerUrl) {
@@ -118,21 +118,25 @@ function fetchSync_init (options) {
 
   hasStartedInit = true
 
-  navigator.serviceWorker
-    .register(options.workerUrl, options.workerOptions)
-    .then((registration) => {
-      if (options.forceUpdate) {
-        registration.update()
+  return navigator.serviceWorker.ready
+    .then((controller) => {
+      if (!controller && options) {
+        return navigator.serviceWorker
+          .register(options.workerUrl, options.workerOptions)
+          .then((registration) => options.forceUpdate && registration.update())
+      } else if (!controller && !options) {
+        throw new Error('no active service worker or configuration passed to install one')
       }
-      return store.dispatch(setServiceWorker(navigator.serviceWorker.controller))
     })
-    .then(() => store.dispatch(openCommsChannel()))
+    .then(() => {
+      store.dispatch(setServiceWorker(navigator.serviceWorker.controller))
+      store.dispatch(openCommsChannel())
+    })
     .catch((err) => {
-      console.warn('fetchSync: failed to register the Service Worker')
-      throw err
+      hasStartedInit = false
+      console.warn('fetchSync initialisation failed: ' + err.message)
     })
-
-  return commsChannel.promise
+    .then(() => commsChannel.promise)
 }
 
 /**
@@ -195,7 +199,7 @@ Object.keys(fetchSync)
         enumerable: true,
         value: (...args) => {
           if (!hasStartedInit) {
-            throw new Error('Initialise fetchSync first by calling fetchSync.init(<options>)')
+            throw new Error('Initialise fetchSync first by calling fetchSync.init()')
           }
           const { commsChannel } = store.getState()
           return commsChannel.promise
