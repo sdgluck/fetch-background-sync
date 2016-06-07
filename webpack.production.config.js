@@ -3,8 +3,6 @@
 var path = require('path')
 var webpack = require('webpack')
 
-var babel = require('./webpack.babel')
-
 var uglifyPlugin = new webpack.optimize.UglifyJsPlugin({
   compress: {
     unused: true,
@@ -34,6 +32,10 @@ module.exports = {
     definePlugin
   ],
   module: {
-    loaders: [babel]
+    loaders: [{
+      test: /\.js?$/,
+      exclude: /node_modules/,
+      loaders: ['babel-loader']
+    }]
   }
 }

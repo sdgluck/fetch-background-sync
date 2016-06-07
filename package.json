@@ -2,6 +2,7 @@
   "name": "fetch-sync",
   "version": "0.1.1",
   "description": "A handy wrapper for the Background Sync API",
+  "jsnext:main": "lib/client/index.js",
   "author": "Sam Gluck <sdgluck@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -10,12 +11,13 @@
   },
   "scripts": {
     "lint": "standard fetchSync/**/*.js",
-    "build": "webpack --config webpack.production.config.js",
-    "build:dev": "webpack --config webpack.development.config.js",
+    "build": "babel fetchSync --out-dir lib",
+    "build:umd": "webpack --config webpack.development.config.js",
+    "build:umd:min": "webpack --config webpack.production.config.js",
     "watch": "webpack --progress --colors --watch --config webpack.development.config.js",
     "clean": "rm -rf dist",
     "test": "node test/server.js",
-    "prepublish": "npm run lint && npm run clean && npm run build && npm run build:dev"
+    "prepublish": "npm run lint && npm run clean && npm run build && npm run build:umd && npm run build:umd:min"
   },
   "bugs": {
     "url": "https://github.com/sdgluck/fetch-sync/issues"

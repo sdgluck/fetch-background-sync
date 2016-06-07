@@ -109,7 +109,7 @@ Example:
         // ES5
         var fetchSync = require('fetch-sync')
 
-        // Script
+        // Script, using bundled dist
         <script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
 
         // Initialise, passing in worker lib location...

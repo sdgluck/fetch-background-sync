@@ -3,8 +3,6 @@
 var path = require('path')
 var webpack = require('webpack')
 
-var babel = require('./webpack.babel')
-
 var definePlugin = new webpack.DefinePlugin({
   __DEV__: true,
   'process.env.NODE_ENV': '"development"'
@@ -24,6 +22,10 @@ module.exports = {
   devtool: 'source-map',
   plugins: [definePlugin],
   module: {
-    loaders: [babel]
+    loaders: [{
+      test: /\.js?$/,
+      exclude: /node_modules/,
+      loaders: ['babel-loader']
+    }]
   }
 }
