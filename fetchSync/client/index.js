@@ -115,10 +115,18 @@ function fetchSync_init (options = null) {
   }
 
   const { commsChannel } = store.getState()
+  const controller = navigator.serviceWorker.controller
 
   hasStartedInit = true
 
-  return navigator.serviceWorker.ready
+  return Promise.resolve()
+    .then(() => {
+      if (controller) {
+        return controller
+      } else if (!options) {
+        return navigator.serviceWorker.ready
+      }
+    })
     .then((controller) => {
       if (!controller && options) {
         return navigator.serviceWorker
