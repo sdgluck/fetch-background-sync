@@ -25,6 +25,8 @@
 <script>
     /* global fetchSync:false */
 
+    var GET_ME_A_CAT = 'http://thecatapi.com/api/images/get?format=src&type=gif'
+
     var main = document.querySelector('#main')
     var error = document.querySelector('#error')
     var waitingWorker = document.querySelector('#waiting-worker')
@@ -53,7 +55,7 @@
 
         waitingResult.style.display = 'block'
 
-        request = fetchSync('http://thecatapi.com/api/images/get?format=src&type=gif')
+        request = fetchSync(GET_ME_A_CAT)
             .then(function (response) {
                 return response.blob()
             })
