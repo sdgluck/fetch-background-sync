@@ -40,7 +40,7 @@
     "redux-logger": "^2.6.0",
     "redux-thunk": "^1.0.3",
     "serialise-request": "0.0.7",
-    "serialise-response": "0.0.4",
+    "serialise-response": "0.0.4"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
