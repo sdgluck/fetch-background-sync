@@ -1,1 +1,1 @@
-importScripts('./node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
+importScripts('./node_modules/fetch-sync/dist/fetch-sync.sw.js')
