@@ -9,7 +9,6 @@ import { addSync, addSyncs, removeSync, setCommsOpen, removeAllSyncs, requestOpe
   requestCancelSync, requestRegisterSync, requestCancelAllSyncs } from './creators'
 
 import { CommsChannelStatus } from '../../constants'
-import { Responses } from '../../actionTypes'
 import store from './index'
 
 export function registerSync (sync) {
@@ -132,20 +131,11 @@ function postMessage (data) {
 function receiveFetchResponse (event) {
   return (dispatch, getState) => {
     const { syncs } = getState()
-    const { type, data } = JSON.parse(event.data)
+    const data = JSON.parse(event.data)
     const sync = syncs[data.id]
 
     if (sync) {
-      switch (type) {
-        case Responses.SUCCESS:
-          handleSyncSuccess(dispatch, sync, data)
-          return
-        case Responses.FAILURE:
-          handleSyncFailure(dispatch, sync, data)
-          return
-        default:
-          throw new Error(`Unknown response type '${type}'`)
-      }
+      handleSyncSuccess(dispatch, sync, data)
     }
   }
 }
@@ -157,16 +147,6 @@ function handleSyncSuccess (dispatch, sync, data) {
 
   if (sync.name) {
     sync.response = response
-  } else {
-    dispatch(removeSync(sync))
-  }
-}
-
-function handleSyncFailure (dispatch, sync, data) {
-  sync.reject(data.error)
-
-  if (sync.name) {
-    sync.response = null
   } else {
     dispatch(removeSync(sync))
   }

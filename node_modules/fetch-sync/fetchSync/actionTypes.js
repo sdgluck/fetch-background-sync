@@ -15,8 +15,3 @@ export const Requests = {
   CANCEL_SYNC: 'CANCEL_SYNC',
   CANCEL_ALL: 'CANCEL_ALL'
 }
-
-export const Responses = {
-  SUCCESS: 'SUCCESS',
-  FAILURE: 'FAILURE'
-}
