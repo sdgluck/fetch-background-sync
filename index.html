@@ -4,12 +4,12 @@
     <script src="fetch-sync.min.js"></script>
     <style>
         #error { display: none; color: red; }
-        #main { display: block; }
-        #waiting { display: none; }
+        #main { display: none; }
     </style>
 </head>
 <body>
 <div id="error"></div>
+<p id="waiting-service-worker">Waiting for service worker... (refresh the page?)</p>
 <div id="main">
     <ol>
         <li>Go offline
@@ -18,7 +18,7 @@
         <li>Tada!
     </ol>
     <button onclick="makeRequest()">Make request</button>
-    <p id="waiting">Waiting for connectivity...</p>
+    <p id="waiting-result">Waiting for connectivity...</p>
     <img id="result" />
 </div>
 <script>
@@ -26,14 +26,17 @@
 
     var main = document.querySelector('#main')
     var error = document.querySelector('#error')
-    var waiting = document.querySelector('#waiting')
+    var waitingWorker = document.querySelector('#waiting-worker')
+    var waitingResult = document.querySelector('#waiting-result')
     var result = document.querySelector('#result')
 
     var request = false
 
-    fetchSync
-        .init({
-            workerUrl: 'fetch-sync.min.js'
+    navigator.serviceWorker
+        .register('./sw.js', { scope: './' })
+        .then(function () {
+            waitingWorker.style.display = 'none'
+            main.style.display = 'block'
         })
         .catch(function (err) {
             main.style.display = 'none'
@@ -47,7 +50,7 @@
         }
 
         request = true
-        waiting.style.display = 'block'
+        waitingResult.style.display = 'block'
 
         fetchSync('http://thecatapi.com/api/images/get?format=src&type=gif')
             .then(function (response) {
@@ -56,7 +59,7 @@
             .then(function (blob) {
                 result.src = URL.createObjectURL(blob)
                 request = false
-                waiting.style.display = 'none'
+                waitingResult.style.display = 'none'
             })
             .catch(function (err) {
                 error.innerText = err.message
