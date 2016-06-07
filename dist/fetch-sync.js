@@ -479,7 +479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var messageChannel = new MessageChannel();
 	      var complete = false;
 	
-	      serviceWorker.postMessage((0, _creators.requestOpenComms)(), [messageChannel.port2]);
+	      serviceWorker.controller.postMessage((0, _creators.requestOpenComms)(), [messageChannel.port2]);
 	
 	      messageChannel.port1.onmessage = function (event) {
 	        complete = true;
@@ -1197,7 +1197,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options.forceUpdate) {
 	      registration.update();
 	    }
-	  }).then(function () {
 	    return _store2.default.dispatch((0, _creators.setServiceWorker)(navigator.serviceWorker.controller));
 	  }).then(function () {
 	    return _store2.default.dispatch((0, _requests.openCommsChannel)());

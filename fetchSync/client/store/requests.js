@@ -58,7 +58,7 @@ export function openCommsChannel () {
       const messageChannel = new MessageChannel()
       let complete = false
 
-      serviceWorker.controller.postMessage(
+      serviceWorker.postMessage(
         requestOpenComms(),
         [messageChannel.port2]
       )
