@@ -25,6 +25,7 @@ _If the browser does not support Background Sync, the library will fall back on 
 - __[Initialisation](#initialisation)__
 - __[Usage](#usage)__
 - __[Sync API](#sync-api)__
+- [Dependencies](#dependencies)
 - [Todo](#todo)
 - [Test](#test)
 - [Development](#development)
@@ -266,6 +267,13 @@ The time that the sync operation was created.
 The time that the sync operation was completed.
 
 Useful for named syncs that you want to retrieve later on.
+
+## Dependencies
+
+- [redux](https://github.com/reactjs/redux)
+- [idb-wrapper](https://github.com/jensarps/IDBWrapper)
+- [serialise-request](https://github.com/sdgluck/serialise-request)
+- [serialise-response](https://github.com/sdgluck/serialise-response)
 
 ## Todo
 
