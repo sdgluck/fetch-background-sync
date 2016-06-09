@@ -270,10 +270,11 @@ Useful for named syncs that you want to retrieve later on.
 
 ## Dependencies
 
-- [redux](https://github.com/reactjs/redux)
+- [redux](https://github.com/reactjs/redux) (& redux-thunk)
 - [idb-wrapper](https://github.com/jensarps/IDBWrapper)
 - [serialise-request](https://github.com/sdgluck/serialise-request)
 - [serialise-response](https://github.com/sdgluck/serialise-response)
+- [mini-defer](https://github.com/sdgluck/mini-defer)
 
 ## Todo
 
