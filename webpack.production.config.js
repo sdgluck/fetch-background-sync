@@ -18,8 +18,8 @@ var definePlugin = new webpack.DefinePlugin({
 
 module.exports = {
   entry: {
-    'fetch-sync': path.resolve(__dirname, './fetchSync/client/index.js'),
-    'fetch-sync.sw': path.resolve(__dirname, './fetchSync/worker/index.js')
+    'fetch-sync': path.resolve(__dirname, './src/client/index.js'),
+    'fetch-sync.sw': path.resolve(__dirname, './src/worker/index.js')
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
