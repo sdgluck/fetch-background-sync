@@ -278,9 +278,8 @@ Useful for named syncs that you want to retrieve later on.
 
 ## Todo
 
-- [WIP] Add support for periodicSync operations.
-(See the outdated [`periodic-sync-support` branch](https://github.com/sdgluck/fetch-sync/tree/periodic-sync-support).)
 - Reduce size of client and SW bundles.
+- Reduce complexity of lib. (See `refactor` branch for overhaul.)
 - Create more sophisticated `gh-pages` demo that consumes most of available API.
 
 ## Test
