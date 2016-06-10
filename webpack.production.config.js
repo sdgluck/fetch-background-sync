@@ -11,15 +11,10 @@ var uglifyPlugin = new webpack.optimize.UglifyJsPlugin({
   }
 })
 
-var definePlugin = new webpack.DefinePlugin({
-  __DEV__: false,
-  'process.env.NODE_ENV': '"production"'
-});
-
 module.exports = {
   entry: {
-    'fetch-sync': path.resolve(__dirname, './src/client/index.js'),
-    'fetch-sync.sw': path.resolve(__dirname, './src/worker/index.js')
+    'fetch-sync': path.resolve(__dirname, './src/client.js'),
+    'fetch-sync.sw': path.resolve(__dirname, './src/worker.js')
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -28,8 +23,7 @@ module.exports = {
     libraryTarget: 'umd'
   },
   plugins: [
-    uglifyPlugin,
-    definePlugin
+    uglifyPlugin
   ],
   module: {
     loaders: [{

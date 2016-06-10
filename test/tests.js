@@ -14,11 +14,13 @@ describe('fetchSync', function () {
     } else if (!('serviceWorker' in navigator && 'SyncManager' in window)) {
       throw new Error('Background Sync not supported')
     }
+
+    return fetchSync.cancelAll()
   })
 
   describe('#sync', function () {
     it('should throw without a first argument', function () {
-      return catchAndMatch(fetchSync, /expecting URL to be/i)
+      return catchAndMatch(fetchSync, /expecting request to be/i)
     })
 
     describe('GET with String URL', function () {
@@ -98,8 +100,9 @@ describe('fetchSync', function () {
     fetchSync('MySecondNamedSync', '/get/5')
 
     it('should retrieve result for named "MySecondNamedSync" operation', function () {
-      return fetchSync
-        .get('MySecondNamedSync')
+      var sync = fetchSync.get('MySecondNamedSync')
+
+      return sync
         .then(function (response) {
           return response.json()
         })

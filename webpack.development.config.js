@@ -1,17 +1,11 @@
 'use strict'
 
 var path = require('path')
-var webpack = require('webpack')
-
-var definePlugin = new webpack.DefinePlugin({
-  __DEV__: true,
-  'process.env.NODE_ENV': '"development"'
-});
 
 module.exports = {
   entry: {
-    'fetch-sync': path.resolve(__dirname, './src/client/index.js'),
-    'fetch-sync.sw': path.resolve(__dirname, './src/worker/index.js')
+    'fetch-sync': path.resolve(__dirname, './src/client.js'),
+    'fetch-sync.sw': path.resolve(__dirname, './src/worker.js')
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -20,7 +14,6 @@ module.exports = {
     libraryTarget: 'umd'
   },
   devtool: 'source-map',
-  plugins: [definePlugin],
   module: {
     loaders: [{
       test: /\.js?$/,

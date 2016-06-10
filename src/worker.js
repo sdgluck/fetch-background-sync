@@ -1,40 +1,58 @@
 (function () {
-  /* global self:false, require:false, fetch:false, __DEV__:false */
+  /* global self:false, require:false, fetch:false */
+
+  'use strict'
 
   const msgr = require('msgr')
   const IDBStore = require('idb-wrapper')
   const serialiseRequest = require('serialise-request')
   const serialiseResponse = require('serialise-response')
 
-  const { OPEN_COMMS, REGISTER_SYNC, 
-    CANCEL_SYNC, CANCEL_ALL_SYNCS } = require('./Messages')
-
   const store = new IDBStore({
     dbVersion: 1,
     keyPath: 'id',
-    storeName: __DEV__
-      ? '$$syncs_' + Date.now()
-      : '$$syncs'
+    storePrefix: 'fetchSyncs/',
+    storeName: 'syncs'
   })
 
-  const channel = msgr({
-    [OPEN_COMMS]: (event) => {
-      channel.setDefaultPort(event.ports[0])
+  const channel = msgr.worker({
+    // On get syncs, respond with all operations in the store
+    GET_SYNCS: (_, respond) => {
+      pify(store.getAll)()
+        .then(...responders(respond))
     },
-    [REGISTER_SYNC]: ({ data }) => {
-      return registerSync(data.sync)
-        .then(() => addSync(data.sync))
+    // On register, register a sync with worker and then add to store
+    REGISTER_SYNC: (sync, respond) => {
+      registerSync(sync)
+        .then(() => addSync(sync))
+        .then(...responders(respond))
     },
-    [CANCEL_SYNC]: ({ data }) => {
-      return new Promise(store.remove.bind(store, data.id))
+    // On cancel, remove the sync from store
+    CANCEL_SYNC: (id, respond) => {
+      pify(store.remove)(id)
+        .then(...responders(respond))
     },
-    [CANCEL_ALL_SYNCS]: () => {
-      return new Promise(store.getAll.bind(store)).then((syncs) => {
-        const ids = syncs.map((sync) => sync.id)
-        return new Promise(store.removeBatch.bind(store, ids))
-      })
+    // On cancel all, remove all syncs from store
+    CANCEL_ALL_SYNCS: (_, respond) => {
+      pify(store.getAll)()
+        .then((syncs) => syncs.map((sync) => sync.id))
+        .then((ids) => pify(store.removeBatch)(ids))
+        .then(...responders(respond))
     }
   })
+
+  // Promisify a method on the `store`
+  function pify (method) {
+    return (...args) => {
+      return new Promise(function (resolve, reject) {
+        method.call(store, ...args, resolve, reject)
+      })
+    }
+  }
+
+  function responders (respond) {
+    return [respond, (e) => respond({ error: e.message })]
+  }
 
   function registerSync (sync) {
     return self
@@ -43,39 +61,37 @@
   }
 
   function addSync (sync) {
-    return new Promise(store.put.bind(store, sync)).catch((err) => {
-      if (!/key already exists/i.test(err.message)) {
+    return pify(store.put)(sync).then(null, (err) => {
+      if (!/key already exists/.test(err.message)) {
         throw err
       }
     })
   }
 
   function syncEvent (event) {
-    event.waitUntil(
-      new Promise(store.get.bind(store, event.tag)).then((sync) => {
-        if (!sync) {
-          if (event.registration) {
-            event.registration.unregister()
-          }
-          return
-        }
+    event.waitUntil(pify(store.get)(event.tag).then((sync) => {
+      if (!sync) {
+        event.registration && event.registration.unregister()
+        store.remove(event.tag)
+        return
+      }
 
-        const id = sync.id
-        const lastChance = event.lastChance
-        const request = serialiseRequest.deserialise(sync.request)
+      const id = sync.id
+      const syncedOn = Date.now()
+      const lastChance = event.lastChance
+      const request = serialiseRequest.deserialise(sync.request)
 
-        return fetch(request)
-          .then(serialiseResponse)
-          .then((response) => {
-            const syncedOn = Date.now()
-
-            if (!sync.name) store.remove(id)
-            else store.put({ ...sync, response, syncedOn })
-            
-            channel.postMessage({ id, lastChance, response })
-          })
-      })
-    )
+      return fetch(request)
+        .then(serialiseResponse)
+        .then((response) => {
+          channel.send('SYNC_RESULT', { id, lastChance, response })
+          return { ...sync, response, syncedOn }
+        })
+        .then((updatedSync) => {
+          if (!updatedSync.name) store.remove(id)
+          else store.put(updatedSync)
+        })
+    }))
   }
 
   // The 'sync' event fires when connectivity is

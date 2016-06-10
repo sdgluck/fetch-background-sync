@@ -23,12 +23,17 @@
   "bugs": {
     "url": "https://github.com/sdgluck/fetch-sync/issues"
   },
+  "homepage": "https://github.com/sdgluck/fetch-sync#readme",
   "keywords": [
     "background",
     "sync",
     "service",
     "worker",
     "http",
+    "helper",
+    "utility",
+    "tool",
+    "module",
     "network",
     "fetch",
     "request",
@@ -39,9 +44,11 @@
   "dependencies": {
     "idb-wrapper": "^1.6.2",
     "mini-defer": "0.0.2",
+    "msgr": "^2.0.0",
     "serialise-request": "0.0.7",
     "serialise-response": "0.0.4",
-    "shortid": "^2.2.6"
+    "shortid": "^2.2.6",
+    "sw-register": "^0.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",

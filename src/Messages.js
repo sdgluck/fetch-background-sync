@@ -1,5 +1,0 @@
-export const OPEN_COMMS = 'OPEN_COMMS'
-export const REGISTER_SYNC = 'REGISTER_SYNC'
-export const CANCEL_SYNC = 'CANCEL_SYNC'
-export const CANCEL_ALL_SYNCS = 'CANCEL_ALL_SYNCS'
-export const SYNC_RESULT = 'SYNC_RESULT'
