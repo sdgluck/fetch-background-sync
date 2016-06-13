@@ -72,7 +72,9 @@ __Existing Service Worker__
 
 If your application already uses a Service Worker, you can import the Fetch Sync worker using `importScripts`:
 
-    importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
+```js
+importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
+```
 
 And then call `fetchSync.init()` somewhere in your application's initialisation procedure.
 
@@ -93,38 +95,46 @@ Initialise fetchSync.
 
 - __options__ {Object} _(optional)_ options object
 
-        options {
-          // The URL of the fetchSync worker script.
-          workerUrl {String} (required, default: null)
+```js
+options {
+  // The URL of the fetchSync worker script.
+  workerUrl {String} (required, default: null)
 
-          // The options object to pass to the worker registration function.
-          workerOptions {Object} (optional, default: null)
+  // The options object to pass to the worker registration function.
+  workerOptions {Object} (optional, default: null)
 
-          // Force the worker registration to update the worker script.
-          forceUpdate {Boolean} (optional, default: false)
-        }
+  // Force the worker registration to update the worker script.
+  forceUpdate {Boolean} (optional, default: false)
+}
+```
 
 Example:
 
-    // Import client lib...
+```js
+// Import client lib...
   
-    // ES6
-    import fetchSync from 'fetch-sync'
+// ES6
+import fetchSync from 'fetch-sync'
   
-    // ES5
-    var fetchSync = require('fetch-sync')
+// ES5
+var fetchSync = require('fetch-sync')
+```
+
+```html
+<!-- Script, using bundled dist -->
+<script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
+```
+
+```js
+// Initialise, passing in worker lib location...
   
-    // Script, using bundled dist
-    <script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
-  
-    // Initialise, passing in worker lib location...
-  
-    fetchSync.init({
-      workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
-      workerOptions: {
-        scope: '<website address>' // e.g. 'http://localhost:8000'
-      }
-    })
+fetchSync.init({
+  workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
+  workerOptions: {
+    scope: '<website address>' // e.g. 'http://localhost:8000'
+  }
+})
+```
 
 ### `fetchSync([name, ]request[, options]) : Promise<Response>`
 
@@ -147,38 +157,47 @@ Examples:
 
 - named GET
 
-        fetchSync('GetMessages', '/messages')
-          .then((response) => response.json())
-          .then((json) => console.log(json.foo))
+```js
+fetchSync('GetMessages', '/messages')
+  .then((response) => response.json())
+  .then((json) => console.log(json.foo))
+```
 
 - unnamed POST
 
-        const post = fetchSync('/update-profile', {
-          method: 'POST',
-          body: { name: '' }
-        })
+```js
+const post = fetchSync('/update-profile', {
+  method: 'POST',
+  body: { name: '' }
+})
         
-        // cancel the sync...
-        post.cancel()
-
+// cancel the sync...
+post.cancel()
+```
 - unnamed with options
 
-        const headers = new Headers();
+```js
+const headers = new Headers();
         
-        headers.append('Authorization', 'Basic abcdefghijklmnopqrstuvwxyz');
+headers.append('Authorization', 'Basic abcdefghijklmnopqrstuvwxyz');
         
-        // `fetchSync` accepts the same args as `fetch`...
-        fetchSync('/send-message', { headers })
-        
+// `fetchSync` accepts the same args as `fetch`...
+fetchSync('/send-message', { headers })
+```
+
 - named with options
 
-        fetchSync('/get-messages', { headers })
+```js
+fetchSync('/get-messages', { headers })
+```
 
 - unnamed with Request
 
-        fetchSync(
-          new Request('/messages')
-        )
+```js
+fetchSync(
+  new Request('/messages')
+)
+```
 
 ### `fetchSync.get(name) : Promise`
 
@@ -192,17 +211,19 @@ There are some properties/methods on the returned Promise. See the [Sync API](#s
 
 Example:
 
-    fetchSync('SendMessage', '/message', { body: 'Hello, World!' })
+```js
+fetchSync('SendMessage', '/message', { body: 'Hello, World!' })
         
-    const sync = fetchSync.get('SendMessage')
+const sync = fetchSync.get('SendMessage')
         
-    sync.then((response) => {
-      if (response.ok) {
-        alert(`Your message was sent at ${new Date(sync.syncedOn).toDateString()}.`
-      } else {
-        alert('Message failed to send.')
-      }
-    })
+sync.then((response) => {
+  if (response.ok) {
+    alert(`Your message was sent at ${new Date(sync.syncedOn).toDateString()}.`
+  } else {
+    alert('Message failed to send.')
+  }
+})
+```
 
 ### `fetchSync.getAll() : Array<Promise>`
 
@@ -212,9 +233,11 @@ Returns an array of all sync operations (named and unnamed).
 
 Example:
 
-    fetchSync
-      .getAll()
-      .forEach((sync) => sync.cancel())
+```js
+fetchSync
+  .getAll()
+  .forEach((sync) => sync.cancel())
+```
 
 ### `fetchSync.cancel(name) : Promise`
 
@@ -224,8 +247,10 @@ Cancel the sync with the given `name`.
 
 Example:
 
-    fetchSync('Update', '/update', { body })
-    fetchSync.cancel('Update')
+```js
+fetchSync('Update', '/update', { body })
+fetchSync.cancel('Update')
+```
 
 ### `fetchSync.cancelAll() : Promise`
 
@@ -241,16 +266,20 @@ Returns a Promise of success of the cancellation.
 
 Example:
 
-    const sync = fetchSync.get('Update')
-    sync.cancel()
+```js
+const sync = fetchSync.get('Update')
+sync.cancel()
+```
 
 ### `sync.getResponse() : Response`
 
 Response retrieved when the operation was completed. Or null if the operation is incomplete.
 
-    const sync = fetchSync.get('Update')
-    const response = sync.getResponse()
-    console.log(response ? response.ok ? 'Response OK' : 'Response not OK' : 'No response')
+```js
+const sync = fetchSync.get('Update')
+const response = sync.getResponse()
+console.log(response ? response.ok ? 'Response OK' : 'Response not OK' : 'No response')
+```
 
 ### `sync.id`
 
@@ -294,8 +323,10 @@ On running `npm test` an Express server will be started at `localhost:8000`.
 
 Run the tests:
 
-    $ cd fetch-sync
-    $ npm test
+```sh
+$ cd fetch-sync
+$ npm test
+```
 
 ## Development
 
