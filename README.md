@@ -20,8 +20,6 @@ Check out a [live demo here](https://sdgluck.github.io/fetch-sync/).
 - Can be used with existing Service Worker infrastructures with `importScripts`, or handles SW registration for you.
 - If the browser does not support Background Sync, the library will fall back on normal `fetch` requests.
 
-__Note:__ _this is not production ready. Please see the `refactor` branch for an ongoing overhaul of the library that is a much cleaner implementation (two files, half the LOC)._
-
 ## Install
 
 ```sh
