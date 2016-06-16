@@ -1,8 +1,9 @@
 {
   "name": "fetch-sync",
-  "version": "0.5.1",
-  "description": "A handy wrapper for the Background Sync API",
-  "jsnext:main": "lib/client/index.js",
+  "version": "1.0.0",
+  "description": "Proxy fetch requests through the Background Sync API",
+  "main": "lib/client/index.js",
+  "jsnext:main": "src/client/index.js",
   "author": "Sam Gluck <sdgluck@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -10,8 +11,8 @@
     "url": "git+https://github.com/sdgluck/fetch-sync.git"
   },
   "scripts": {
-    "lint": "standard fetchSync/**/*.js",
-    "build": "babel fetchSync --out-dir lib",
+    "lint": "standard src/**/*.js",
+    "build": "babel src --out-dir lib",
     "build:umd": "webpack --config webpack.development.config.js",
     "build:umd:min": "webpack --config webpack.production.config.js",
     "watch": "webpack --progress --colors --watch --config webpack.development.config.js",
@@ -22,12 +23,17 @@
   "bugs": {
     "url": "https://github.com/sdgluck/fetch-sync/issues"
   },
+  "homepage": "https://github.com/sdgluck/fetch-sync#readme",
   "keywords": [
     "background",
     "sync",
     "service",
     "worker",
     "http",
+    "helper",
+    "utility",
+    "tool",
+    "module",
     "network",
     "fetch",
     "request",
@@ -38,11 +44,11 @@
   "dependencies": {
     "idb-wrapper": "^1.6.2",
     "mini-defer": "0.0.2",
-    "redux": "^3.3.1",
-    "redux-logger": "^2.6.0",
-    "redux-thunk": "^1.0.3",
+    "msgr": "^2.0.0",
     "serialise-request": "0.0.7",
-    "serialise-response": "0.0.4"
+    "serialise-response": "0.0.4",
+    "shortid": "^2.2.6",
+    "sw-register": "^0.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",

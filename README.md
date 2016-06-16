@@ -1,34 +1,41 @@
-# Fetch Sync
+# fetch-sync
 
-> A handy wrapper for the [Background Sync API](https://github.com/WICG/BackgroundSync/blob/master/explainer.md)
+> Proxy fetch requests through the [Background Sync API](https://github.com/WICG/BackgroundSync/blob/master/explainer.md)
 
 Made with ❤ at [@outlandish](http://www.twitter.com/outlandish)
 
 <a href="http://badge.fury.io/js/fetch-sync"><img alt="npm version" src="https://badge.fury.io/js/fetch-sync.svg"></a>
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
-Fetch Sync allows you to proxy fetch requests through the Background Sync API so that they are honoured if made when the UA is offline! Hooray!
+Fetch Sync allows you to proxy fetch requests through the Background Sync API so that they are
+honoured if made when the UA is offline! Hooray!
 
 Check out a [live demo here](https://sdgluck.github.io/fetch-sync/).
 
-_If the browser does not support Background Sync, the library will fall back on normal `fetch` requests._
+- Make requests offline that will be sent when the UA regains connectivity (even if the web page is no longer open).
+- Responses are forwarded back to the client as soon as they are received.
+- Implements a familiar fetch-like API: similar function signature and the same return type (a Response).
+- Make named requests that have their response stored in an IDBStore which you can collect in subsequent user sessions.
+- Manage sync operations with `fetchSync.{get,getAll,cancel,cancelAll}()`.
+- Can be used with existing Service Worker infrastructures with `importScripts`, or handles SW registration for you.
+- If the browser does not support Background Sync, the library will fall back on normal `fetch` requests.
 
 __Note:__ _this is not production ready. Please see the `refactor` branch for an ongoing overhaul of the library that is a much cleaner implementation (two files, half the LOC)._
 
 ## Install
 
-    npm install fetch-sync --save
+```sh
+npm install fetch-sync --save
+```
 
 ## Table of Contents
 
 - [Requirements](#requirements)
 - [Support](#support)
-- __[Features](#features)__
 - __[Initialisation](#initialisation)__
 - __[Usage](#usage)__
 - __[Sync API](#sync-api)__
 - [Dependencies](#dependencies)
-- [Todo](#todo)
 - [Test](#test)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -54,23 +61,11 @@ Chrome Canary | Chrome | Firefox | IE | Opera | Safari
 :------------:|:------:|:-------:|:--:|:-----:|:-----:
 ✔             |✔      |✘       |✘   |✘     |✘
 
-## Features
-
-- Register a Background Sync operation with one call to `fetchSync()`.
-
-- Uses a `fetch`-like API. Accepts a Request or String URL, and returns the Promise of a Response.
-
-- Manage sync operations with `fetchSync.{get,getAll,cancel,cancelAll}()`.
-
-- Named sync operations and have their response stored within an IndexedDB store and are synced between client and worker.
-
-- Can be used with existing Service Worker infrastructures with `importScripts`, or can handle SW registration for you.
-
 ## Initialise
 
 __Existing Service Worker__
 
-If your application already uses a Service Worker, you can import the Fetch Sync worker using `importScripts`:
+If your application already uses a Service Worker, you can import the fetch-sync worker using `importScripts`:
 
 ```js
 importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
@@ -80,9 +75,9 @@ And then call `fetchSync.init()` somewhere in your application's initialisation 
 
 __No Service Worker__
 
-Fetch Sync can handle registration if you don't use a SW already...
+fetch-sync can handle registration if you don't use a SW already...
 
-Either serve the Fetch Sync worker file with a header `"Service-Worker-Allowed : /"`, or to avoid configuring headers,
+Either serve the fetch-sync worker file with a header `"Service-Worker-Allowed : /"`, or to avoid configuring headers,
 create a Service Worker script in the root of your project and use the method above for 'Existing Service Worker'.
 
 Then see the example under [Usage](#usage) for the `fetchSync.init()` method.
@@ -95,27 +90,17 @@ Initialise fetchSync.
 
 - __options__ {Object} _(optional)_ options object
 
-```js
-options {
-  // The URL of the fetchSync worker script.
-  workerUrl {String} (required, default: null)
-
-  // The options object to pass to the worker registration function.
-  workerOptions {Object} (optional, default: null)
-
-  // Force the worker registration to update the worker script.
-  forceUpdate {Boolean} (optional, default: false)
-}
-```
+Look at the documentation for [`sw-register`](https://github.com/sdgluck/sw-register)
+available options and for more details on Service Worker registration.
 
 Example:
 
 ```js
 // Import client lib...
-  
+
 // ES6
 import fetchSync from 'fetch-sync'
-  
+
 // ES5
 var fetchSync = require('fetch-sync')
 ```
@@ -127,12 +112,10 @@ var fetchSync = require('fetch-sync')
 
 ```js
 // Initialise, passing in worker lib location...
-  
+
 fetchSync.init({
-  workerUrl: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
-  workerOptions: {
-    scope: '<website address>' // e.g. 'http://localhost:8000'
-  }
+  url: 'node_modules/fetch-sync/dist/fetch-sync.sw.js',
+  scope: '<website address>' // e.g. 'http://localhost:8000'
 })
 ```
 
@@ -148,74 +131,75 @@ Returns a Promise that resolves on success of the fetch request.
 
 If called with a `name`:
 
-- the response will be stored and can be retrieved later using `fetchSync.get(<name>)` and then
-`sync.getResponse()`.
-- the response will not automatically be removed from the IDBStore in the worker. You should request that a named sync be removed manually by using `sync.remove()`.
+- the response will be stored and can be retrieved later using e.g. `fetchSync.get('name').then(sync => sync.response)`.
+- the response will not automatically be removed from the IDBStore in the worker. You should request
+that a named sync be removed manually by using `sync.remove()`.
 - see the [Sync API](#sync-api) for more details.
 
 Examples:
 
 - named GET
 
-```js
-fetchSync('GetMessages', '/messages')
-  .then((response) => response.json())
-  .then((json) => console.log(json.foo))
-```
+    ```js
+    fetchSync('GetMessages', '/messages')
+      .then((response) => response.json())
+      .then((json) => console.log(json.foo))
+    ```
 
 - unnamed POST
 
-```js
-const post = fetchSync('/update-profile', {
-  method: 'POST',
-  body: { name: '' }
-})
-        
-// cancel the sync...
-post.cancel()
-```
+    ```js
+    const post = fetchSync('/update-profile', {
+      method: 'POST',
+      body: { name: '' }
+    })
+
+    // cancel the sync...
+    post.cancel()
+    ```
+
 - unnamed with options
 
-```js
-const headers = new Headers();
-        
-headers.append('Authorization', 'Basic abcdefghijklmnopqrstuvwxyz');
-        
-// `fetchSync` accepts the same args as `fetch`...
-fetchSync('/send-message', { headers })
-```
+    ```js
+    const headers = new Headers();
+
+    headers.append('Authorization', 'Basic abcdefghijklmnopqrstuvwxyz');
+
+    // `fetchSync` accepts the same args as `fetch`...
+    fetchSync('/send-message', { headers })
+    ```
 
 - named with options
 
-```js
-fetchSync('/get-messages', { headers })
-```
+    ```js
+    fetchSync('/get-messages', { headers })
+    ```
 
 - unnamed with Request
 
-```js
-fetchSync(
-  new Request('/messages')
-)
-```
+    ```js
+    fetchSync(
+      new Request('/messages')
+    )
+    ```
 
-### `fetchSync.get(name) : Promise`
+### `fetchSync.get(name) : Sync`
 
 Get a sync by its name.
 
 - __name__ {String} name of the sync operation to get
 
-Returns the Promise that resolves with success of the sync operation.
+Returns a Promise that resolves with success of the sync operation.
 
-There are some properties/methods on the returned Promise. See the [Sync API](#sync-api) for more details.
+There are also some properties/methods on the Sync. See the [Sync API](#sync-api) for more details.
 
 Example:
 
 ```js
 fetchSync('SendMessage', '/message', { body: 'Hello, World!' })
-        
+
 const sync = fetchSync.get('SendMessage')
-        
+
 sync.then((response) => {
   if (response.ok) {
     alert(`Your message was sent at ${new Date(sync.syncedOn).toDateString()}.`
@@ -225,7 +209,7 @@ sync.then((response) => {
 })
 ```
 
-### `fetchSync.getAll() : Array<Promise>`
+### `fetchSync.getAll() : Array<Sync>`
 
 Get all sync operations.
 
@@ -234,9 +218,8 @@ Returns an array of all sync operations (named and unnamed).
 Example:
 
 ```js
-fetchSync
-  .getAll()
-  .forEach((sync) => sync.cancel())
+fetchSync.getAll()
+  .then((syncs) => syncs.forEach(sync => sync.cancel()))
 ```
 
 ### `fetchSync.cancel(name) : Promise`
@@ -271,16 +254,6 @@ const sync = fetchSync.get('Update')
 sync.cancel()
 ```
 
-### `sync.getResponse() : Response`
-
-Response retrieved when the operation was completed. Or null if the operation is incomplete.
-
-```js
-const sync = fetchSync.get('Update')
-const response = sync.getResponse()
-console.log(response ? response.ok ? 'Response OK' : 'Response not OK' : 'No response')
-```
-
 ### `sync.id`
 
 The unique ID of the sync operation. This will be its name if it has one.
@@ -301,17 +274,12 @@ Useful for named syncs that you want to retrieve later on.
 
 ## Dependencies
 
-- [redux](https://github.com/reactjs/redux) (& redux-thunk)
 - [idb-wrapper](https://github.com/jensarps/IDBWrapper)
+- [msgr](https://github.com/sdgluck/msgr)
+- [sw-register](https://github.com/sdgluck/sw-register)
 - [serialise-request](https://github.com/sdgluck/serialise-request)
 - [serialise-response](https://github.com/sdgluck/serialise-response)
 - [mini-defer](https://github.com/sdgluck/mini-defer)
-
-## Todo
-
-- Reduce size of client and SW bundles.
-- Reduce complexity of lib. (See `refactor` branch for overhaul.)
-- Create more sophisticated `gh-pages` demo that consumes most of available API.
 
 ## Test
 

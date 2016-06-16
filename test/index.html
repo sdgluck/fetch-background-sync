@@ -7,31 +7,26 @@
 <body>
   <div id="mocha"></div>
   <script src="dist/fetch-sync.js"></script>
-  <script>
-    if (!navigator.serviceWorker.controller) {
-      // Force refresh so we have an activated worker
-      window.location = window.location
-    }
-  </script>
-  <script>
-    fetchSync.init({
-      forceUpdate: true,
-      workerUrl: '/dist/fetch-sync.sw.js',
-      workerOptions: {
-        scope: 'http://localhost:8000/'
-      }
-    })
-  </script>
   <script src="node_modules/chai/chai.js"></script>
   <script src="node_modules/mocha/mocha.js"></script>
   <script src="node_modules/catch-and-match/index.js"></script>
   <script>
+    fetchSync.init({
+      forceUpdate: true,
+      url: '/dist/fetch-sync.sw.js',
+      scope: 'http://localhost:8000/'
+    })
+
     mocha.ui('bdd');
     mocha.reporter('html');
   </script>
   <script src="test/tests.js"></script>
   <script>
-    mocha.run();
+    if (navigator.serviceWorker.controller) {
+      mocha.run();
+    } else {
+      document.body.innerText = 'Refresh to get the service worker'
+    }
   </script>
 </body>
 </html>
