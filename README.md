@@ -141,7 +141,7 @@ fetchSync.init({
 })
 ```
 
-### `fetchSync([name, ]request[, options]) : Promise<Response>`
+### `fetchSync([name, ]request[, options]) : Sync`
 
 Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.md#one-off-synchronization) Background Sync operation.
 
@@ -150,6 +150,8 @@ Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.
 - [__options__] {Object} _(optional)_ [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch) object
 
 Returns a Promise that resolves on success of the fetch request. Rejects if a sync exists with this name already.
+
+There are also some properties/methods on the Promise. See the [Sync API](#sync-api) for more details.
 
 If called with a `name`:
 
@@ -213,7 +215,7 @@ Get a sync by its name.
 
 Returns a Promise that resolves with success of the sync operation or reject if sync operation is not found.
 
-There are also some properties/methods on the Sync. See the [Sync API](#sync-api) for more details.
+There are also some properties/methods on the Promise. See the [Sync API](#sync-api) for more details.
 
 Example:
 
@@ -291,10 +293,6 @@ The time that the sync operation was created.
 ### `sync.syncedOn`
 
 The time that the sync operation was completed.
-
-### `sync.cancelled`
-
-Is the sync operation cancelled?
 
 ## Dependencies
 
