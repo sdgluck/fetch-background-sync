@@ -30,6 +30,7 @@ npm install fetch-sync --save
 
 - [Requirements](#requirements)
 - [Support](#support)
+- __[Import](#import)__
 - __[Initialisation](#initialisation)__
 - __[Usage](#usage)__
 - __[Sync API](#sync-api)__
@@ -80,6 +81,29 @@ create a Service Worker script in the root of your project and use the method ab
 
 Then see the example under [Usage](#usage) for the `fetchSync.init()` method.
 
+## Import
+
+__Client__
+
+```js
+// ES6
+import fetchSync from 'fetch-sync'
+```
+
+```js
+// CommonJS
+var fetchSync = require('fetch-sync')
+```
+
+```html
+<!-- Script, using minified dist -->
+<script src="/node_modules/fetch-sync/dist/fetch-sync.min.js"></script>
+```
+
+__Worker__
+
+See [Initialise](#initialise) for details on importing and registering the service worker.
+
 ## Usage
 
 ### `fetchSync.init([options]) : Promise`
@@ -125,7 +149,7 @@ Perform a [`sync`](https://github.com/WICG/BackgroundSync/blob/master/explainer.
 - __request__ {String|Request} URL or an instance of fetch Request
 - [__options__] {Object} _(optional)_ [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch) object
 
-Returns a Promise that resolves on success of the fetch request.
+Returns a Promise that resolves on success of the fetch request. Rejects if a sync exists with this name already.
 
 If called with a `name`:
 
@@ -187,7 +211,7 @@ Get a sync by its name.
 
 - __name__ {String} name of the sync operation to get
 
-Returns a Promise that resolves with success of the sync operation.
+Returns a Promise that resolves with success of the sync operation or reject if sync operation is not found.
 
 There are also some properties/methods on the Sync. See the [Sync API](#sync-api) for more details.
 
@@ -200,7 +224,7 @@ const sync = fetchSync.get('SendMessage')
 
 sync.then((response) => {
   if (response.ok) {
-    alert(`Your message was sent at ${new Date(sync.syncedOn).toDateString()}.`
+    alert(`Your message was received at ${new Date(sync.syncedOn).toDateString()}.`
   } else {
     alert('Message failed to send.')
   }
@@ -268,7 +292,9 @@ The time that the sync operation was created.
 
 The time that the sync operation was completed.
 
-Useful for named syncs that you want to retrieve later on.
+### `sync.cancelled`
+
+Is the sync operation cancelled?
 
 ## Dependencies
 

@@ -41,13 +41,8 @@
     }
   })
 
-  // Promisify a method on the `store`
   function pify (method) {
-    return (...args) => {
-      return new Promise(function (resolve, reject) {
-        method.call(store, ...args, resolve, reject)
-      })
-    }
+    return (...args) => new Promise(method.bind(store, ...args))
   }
 
   function responders (respond) {
@@ -78,16 +73,12 @@
 
       const id = sync.id
       const syncedOn = Date.now()
-      const lastChance = event.lastChance
-      const request = serialiseRequest.deserialise(sync.request)
 
-      return fetch(request)
+      return fetch(serialiseRequest.deserialise(sync.request))
         .then(serialiseResponse)
         .then((response) => {
-          channel.send('SYNC_RESULT', { id, lastChance, response })
-          return { ...sync, response, syncedOn }
-        })
-        .then((updatedSync) => {
+          const updatedSync = { ...sync, response, syncedOn }
+          channel.send('SYNC_RESULT', { id, syncedOn, response })
           if (!updatedSync.name) store.remove(id)
           else store.put(updatedSync)
         })

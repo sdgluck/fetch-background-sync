@@ -23,7 +23,8 @@ const syncUtil = {
     createdOn: null,
     syncedOn: null,
     request: null,
-    response: null
+    response: null,
+    cancelled: false
   },
 
   _create (obj = {}) {
@@ -66,19 +67,20 @@ const syncUtil = {
 }
 
 /**
- * Start a channel with the worker. Wrapped so that we can delay
- * execution until we know we have a worker that controls the page.
+ * Start a channel with the worker. Wrapped so we can delay
+ * execution until we know we have an activated worker.
+ * @param {Object} worker
  * @returns {Object}
  */
 const openCommsChannel = (worker) => msgr.client(worker, {
-  SYNC_RESULT: ({ id, response }) => {
-    const sync = syncs.find((syncs) => syncs.id === id)
+  SYNC_RESULT: ({ id, syncedOn, response }) => {
+    const sync = syncs.find((s) => s.id === id)
     if (sync) {
       const realResponse = serialiseResponse.deserialise(response)
       sync.resolve(realResponse)
       if (sync.name) {
         sync.response = realResponse
-        sync.syncedOn = Date.now()
+        sync.syncedOn = syncedOn
       }
     }
   }
@@ -95,7 +97,7 @@ const openCommsChannel = (worker) => msgr.client(worker, {
  * @param {Object} [options]
  * @returns {Promise}
  */
-export default function fetchSync (name, request, options) {
+const _fetchSync = function fetchSync (name, request, options) {
   if (!hasStartedInit) {
     throw new Error('initialise first with fetchSync.init()')
   }
@@ -123,48 +125,50 @@ export default function fetchSync (name, request, options) {
     return fetch(request, options)
   }
 
-  let sync
+  let sync = syncs.find((s) => s.id === name)
 
-  return ready.promise
+  if (sync) {
+    const err = new Error(`sync operation already exists with name '${name}'`)
+    return Promise.reject(err)
+  }
+
+  sync = syncUtil.createFromUserOptions({ name, request, options })
+
+  syncs.push(sync)
+
+  ready.promise
     .then(() => serialiseRequest(new Request(request, options)))
-    .then((request) => syncUtil.createFromUserOptions({ name, request, options }))
-    .then((s) => { sync = s })
+    .then((request) => { sync.request = request })
     .then(() => channel.send('REGISTER_SYNC', sync))
-    .then(() => syncs.push(sync))
-    .then(() => syncUtil.makePublicApi(sync))
+
+  return syncUtil.makePublicApi(sync)
 }
+
+export default _fetchSync
 
 /**
  * Initialise fetchSync.
  * @param {Object} options
  * @returns {Promise}
 */
-fetchSync.init =
-function fetchSync_init (options = null) {
+_fetchSync.init = function fetchSync_init (options = null) {
   if (hasStartedInit) {
     throw new Error('fetchSync.init() called multiple times')
-  } else if (options && !options.url) {
-    throw new Error('expecting `url` in options object')
   }
+
+  hasStartedInit = true
 
   if (!('serviceWorker' in navigator) || !('SyncManager' in window)) {
     hasBackgroundSyncSupport = false
     return Promise.reject(new Error('environment not supported'))
   }
 
-  hasStartedInit = true
-
   return register(options)
     .then(openCommsChannel)
-    .then((c) => {
-      channel = c
-      channel.send('GET_SYNCS').then((data) => {
-        const syncs = data.map(syncUtil.hydrate)
-        syncs.push(...syncs)
-        ready.resolve()
-      })
-    })
-    .then(() => ready.promise)
+    .then((c) => { channel = c })
+    .then(() => channel.send('GET_SYNCS'))
+    .then((data) => syncs.push(...(data || []).map(syncUtil.hydrate)))
+    .then(() => { ready.resolve() })
 }
 
 /**
@@ -172,51 +176,47 @@ function fetchSync_init (options = null) {
  * @param {String} name
  * @returns {Promise}
  */
-fetchSync.get =
-function fetchSync_get (name) {
-  const sync = syncs.find((sync) => sync.name === name)
-  return sync ? syncUtil.makePublicApi(sync) : null
-}
+_fetchSync.get = waitForReady(function fetchSync_get (name) {
+  const sync = syncs.find((s) => s.name === name)
+  return sync ? syncUtil.makePublicApi(sync) : Promise.reject(new Error('not found'))
+})
 
 /**
- * Get all named syncs.
- * @returns {Promise}
+ * Get all syncs.
+ * @returns {Array}
  */
-fetchSync.getAll =
-function fetchSync_getAll () {
-  return syncs.filter((sync) => Boolean(sync.name))
-    .map(syncUtil.makePublicApi)
-}
+_fetchSync.getAll = waitForReady(function fetchSync_getAll () {
+  return syncs.map(syncUtil.makePublicApi)
+})
 
 /**
  * Cancel a sync.
  * @param {Object|String} sync
  * @returns {Promise}
  */
-fetchSync.cancel =
-function fetchSync_cancel (sync) {
-  const syncObj = fetchSync.get(typeof sync === 'object' ? sync.id : sync)
-  return syncObj ? syncObj.cancel() : Promise.reject('not found')
-}
+_fetchSync.cancel = waitForReady(function fetchSync_cancel (name) {
+  const sync = syncs.find((s) => s.name === name)
+  return sync ? syncUtil.makePublicApi(sync).cancel() : Promise.reject(new Error('not found'))
+})
 
 /**
  * Cancel all syncs.
  * @returns {Promise}
  */
-fetchSync.cancelAll =
-function fetchSync_cancelAll () {
+_fetchSync.cancelAll = waitForReady(function fetchSync_cancelAll () {
   return channel.send('CANCEL_ALL_SYNCS')
     .then(() => { syncs = [] })
-}
-
-Object.keys(fetchSync).forEach((methodName) => {
-  if (methodName !== 'init') {
-    const method = fetchSync[methodName].bind(fetchSync)
-    fetchSync[methodName] = function (...args) {
-      if (!hasStartedInit) {
-        throw new Error('initialise first with fetchSync.init()')
-      }
-      return method(...args)
-    }
-  }
 })
+
+/**
+ * Wrap a function to wait for the application to be initialised
+ * (comms channel with service worker is open) before executing.
+ * @param {Function} method
+ * @returns {Function}
+ */
+function waitForReady (method) {
+  return function fetchSync_readyWrapper (...args) {
+    if (hasStartedInit) return ready.promise.then(() => method(...args))
+    throw new Error('initialise first with fetchSync.init()')
+  }
+}
