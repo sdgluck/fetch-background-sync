@@ -31,7 +31,7 @@ npm install fetch-sync --save
 - [Requirements](#requirements)
 - [Support](#support)
 - __[Import](#import)__
-- __[Initialisation](#initialisation)__
+- __[Initialise](#initialise)__
 - __[Usage](#usage)__
 - __[Sync API](#sync-api)__
 - [Dependencies](#dependencies)
@@ -60,27 +60,6 @@ Chrome Canary | Chrome | Firefox | IE | Opera | Safari
 :------------:|:------:|:-------:|:--:|:-----:|:-----:
 ✔             |✔      |✘       |✘   |✘     |✘
 
-## Initialise
-
-__Existing Service Worker__
-
-If your application already uses a Service Worker, you can import the fetch-sync worker using `importScripts`:
-
-```js
-importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
-```
-
-And then call `fetchSync.init()` somewhere in your application's initialisation procedure.
-
-__No Service Worker__
-
-fetch-sync can handle registration if you don't use a SW already...
-
-Either serve the fetch-sync worker file with a header `"Service-Worker-Allowed : /"`, or to avoid configuring headers,
-create a Service Worker script in the root of your project and use the method above for 'Existing Service Worker'.
-
-Then see the example under [Usage](#usage) for the `fetchSync.init()` method.
-
 ## Import
 
 __Client__
@@ -103,6 +82,27 @@ var fetchSync = require('fetch-sync')
 __Worker__
 
 See [Initialise](#initialise) for details on importing and registering the service worker.
+
+## Initialise
+
+__Existing Service Worker__
+
+If your application already uses a Service Worker, you can import the fetch-sync worker using `importScripts`:
+
+```js
+importScripts('node_modules/fetch-sync/dist/fetch-sync.sw.min.js')
+```
+
+And then call `fetchSync.init()` somewhere in your application's initialisation procedure.
+
+__No Service Worker__
+
+fetch-sync can handle registration if you don't use a SW already...
+
+Either serve the fetch-sync worker file with a header `"Service-Worker-Allowed : /"`, or to avoid configuring headers,
+create a Service Worker script in the root of your project and use the method above for 'Existing Service Worker'.
+
+Then see the example under [Usage](#usage) for the `fetchSync.init()` method.
 
 ## Usage
 
