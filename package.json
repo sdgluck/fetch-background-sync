@@ -2,8 +2,8 @@
   "name": "fetch-sync",
   "version": "2.0.0",
   "description": "Proxy fetch requests through the Background Sync API",
-  "main": "lib/client/index.js",
-  "jsnext:main": "src/client/index.js",
+  "main": "lib/client.js",
+  "jsnext:main": "src/client.js",
   "author": "Sam Gluck <sdgluck@gmail.com>",
   "license": "MIT",
   "repository": {
